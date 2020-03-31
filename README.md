@@ -1,6 +1,6 @@
 
 
-# SemiFlow (TODO)
+# SemiFlow
 
 SemiFlow is a neural network framework for machine learning.
 

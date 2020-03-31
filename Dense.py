@@ -64,7 +64,6 @@ class Dense:
         self._pred = sigmoid(self._logits)
 
     def _BackPropagation(self, y_true, learning_rate):
-        # TODO backPropagation
 
         # loss = - (y_true * np.log(self._pred) + (1 - y_true) * np.log(1 - self._pred))
         # d_L_d_Pred = y_true / self._pred + (y_true - 1) / (1 - self._pred)
