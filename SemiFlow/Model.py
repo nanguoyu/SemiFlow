@@ -7,19 +7,31 @@
 
 class Model(object):
     def __init__(self):
-        pass
+        """Model constructor
+        """
+        raise NotImplementedError
 
     def _ForwardPropagation(self):
-        pass
+        """Forward propagation of the Computational Graph
+        """
+        raise NotImplementedError
 
     def _BackPropagation(self):
-        pass
+        """Back propagation of the Computational Graph
+        """
+        raise NotImplementedError
 
     def train(self):
-        pass
+        """train the model by epoch learning rule
+        """
+        raise NotImplementedError
 
     def fit(self):
-        pass
+        """test a data point and return the result
+        """
+        raise NotImplementedError
 
     def evaluate(self):
-        pass
+        """evaluate test data and print metrics
+        """
+        raise NotImplementedError

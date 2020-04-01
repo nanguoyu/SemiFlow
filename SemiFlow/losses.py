@@ -12,6 +12,12 @@ from .engine import backend
 
 
 def binary_cross_entropy(y, p):
+    """
+    binary cross entropy loss function
+    :param y: Y_true
+    :param p: Y_predict
+    :return: loss value
+    """
     assert y.shape[0] == p.shape[0], "wrong shape"
     loss = 0
     for i in range(y.shape[0]):
