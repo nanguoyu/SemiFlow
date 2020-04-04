@@ -7,6 +7,7 @@
 
 from .core import backend
 from .graph import Graph
+from .operations import Operation
 import builtins
 
 DEFAULT_GRAPH = builtins.DEFAULT_GRAPH = Graph()
