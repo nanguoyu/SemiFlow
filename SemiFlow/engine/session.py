@@ -6,6 +6,7 @@
 """
 from . import DEFAULT_GRAPH
 from . import Operation
+from . import Placeholder
 
 
 class Session(object):
@@ -26,8 +27,15 @@ class Session(object):
         for node in all_nodes:
             node.output_value = None
 
-    def run(self):
-        pass
+    def run(self, operation, feed_dict=None):
+        postorder_nodes = self._get_prerequisite(operation)
+
+        for node in postorder_nodes:
+            if isinstance(node, Placeholder):
+                node.output_value = feed_dict[node]
+            else:
+                # TODO verify node type
+                node.compute_output()
 
     def _get_prerequisite(self, operation):
         postorder_nodes = []

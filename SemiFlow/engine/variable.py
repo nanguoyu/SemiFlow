@@ -5,9 +5,10 @@
 @Description : Implement of a variable vertex of the computational graph
 """
 from . import DEFAULT_GRAPH
+from . import Node
 
 
-class Variable(object):
+class Variable(Node):
     """This is a class for trainable variables
     """
 
@@ -15,6 +16,7 @@ class Variable(object):
         """variable constructor
         :param initial_value: initial value of current variable
         """
+        super(self.__class__, self).__init__()
         self.initial_value = initial_value
         # nodes for recursive
         self.output_nodes = []

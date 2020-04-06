@@ -6,9 +6,10 @@
 """
 from . import DEFAULT_GRAPH
 from . import backend
+from . import Node
 
 
-class Operation(object):
+class Operation(Node):
     """This is an abstract class for operations
         each subclass should implement compute_output and compute_gradient
     """
@@ -18,6 +19,7 @@ class Operation(object):
         :param input_nodes: Input nodes for this operation.
         :type input_nodes: variables,placeholders.
         """
+        super(self.__class__, self).__init__()
         # nodes for operation
         self.input_nodes = input_nodes
         # nodes for recursive
@@ -59,6 +61,10 @@ class Add(Operation):
         self.output_value = backend.add(x.output_value, y.output_value)
         return self.output_value
 
+    def compute_gradient(self):
+        # TODO Add.compute_gradient
+        pass
+
 
 class Multiply(Operation):
     """ Multiplication operation.
@@ -80,6 +86,10 @@ class Multiply(Operation):
         self.output_value = backend.multiply(x.output_value, y.output_value)
         return self.output_value
 
+    def compute_gradient(self):
+        # TODO Multiply.compute_gradient
+        pass
+
 
 class MatMul(Operation):
     """ Matrix multiplication operation.
@@ -100,3 +110,7 @@ class MatMul(Operation):
         x, y = self.input_nodes
         self.output_value = backend.dot(x.output_value, y.output_value)
         return self.output_value
+
+    def compute_gradient(self):
+        # TODO MatMul.compute_gradient
+        pass

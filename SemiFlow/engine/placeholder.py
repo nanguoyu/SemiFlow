@@ -5,10 +5,12 @@
 @Description : Implement of a placeholder vertex of the computational graph
 """
 from . import DEFAULT_GRAPH
+from . import Node
 
 
-class Placeholder(object):
+class Placeholder(Node):
     def __init__(self):
+        super(self.__class__, self).__init__()
         self.output_value = None
 
         # Nodes that receive this placeholder node as input.
