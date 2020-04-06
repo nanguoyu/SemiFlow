@@ -11,31 +11,38 @@ I am going to implement a neural network framework in a about month. :)
 for machine learning"。我对自己动手实现深度学习框架很感兴趣。SemiFlow就是用来练手的。
 
 
-In the first week, 
+## A naive example.
+Blog: [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
 
+Code: [A naive dense layer](./A%20naive%20example)
+
+Progress
 - [x] forward propagation
 - [x] backward propagation
 - [x] gradient based method
 - [x] ReLU
 - [x] Sigmoid
-- [ ] Tensor support
-- [ ] Train MNIST
 
-In the second week
-
-- [ ] Auto differentiate
+## Tensorflow style design
+Progress
 - [ ] computational graph
+    - [x] feedforward
+    - [ ] compute gradient
+- [ ] Tensor support
+- [ ] Auto differentiate
 
-In the third week
-
-- [ ] Convolutional neural network
+## Complex layer
+Progress
+- [ ] Convolutional layer
 - [ ] Pooling layer
 - [ ] Stochastic gradient descent
 
-In the fourth week
 
+## Big dataset support
+- [ ] Train MNIST
+
+## Advance 
 - [ ] CUDA support
 
-In the fifth week
-
+## other
 - [ ] Examples and other docs
