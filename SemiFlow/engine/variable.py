@@ -6,6 +6,7 @@
 """
 from . import DEFAULT_GRAPH
 from . import Node
+from . import Add, MatMul, Multiply, Square, Log, Negative
 
 
 class Variable(Node):
@@ -29,3 +30,18 @@ class Variable(Node):
     def compute_output(self):
         if self.output_value is None:
             self.output_value = self.initial_value
+
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
+    def dot(self, other):
+        return MatMul(self, other)

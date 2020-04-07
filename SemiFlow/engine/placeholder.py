@@ -6,6 +6,7 @@
 """
 from . import DEFAULT_GRAPH
 from . import Node
+from . import Add, MatMul, Multiply, Square, Log, Negative
 
 
 class Placeholder(Node):
@@ -21,3 +22,18 @@ class Placeholder(Node):
 
         # Add to the currently active default graph.
         self.graph.placeholders.append(self)
+
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
+    def dot(self, other):
+        return MatMul(self, other)

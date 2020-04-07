@@ -12,7 +12,7 @@ import builtins
 DEFAULT_GRAPH = builtins.DEFAULT_GRAPH = Graph()
 
 from .node import Node
-from .operations import Operation, Add, MatMul, Multiply
+from .operations import Operation, Add, MatMul, Multiply, Square, Log, Negative
 from .placeholder import Placeholder
 from .variable import Variable
 from .session import Session

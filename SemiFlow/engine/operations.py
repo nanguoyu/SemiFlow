@@ -14,7 +14,7 @@ class Operation(Node):
         each subclass should implement compute_output and compute_gradient
     """
 
-    def __init__(self, *input_nodes):
+    def __init__(self, *input_nodes, name=None):
         """ Operation constructor.
         :param input_nodes: Input nodes for this operation.
         :type input_nodes: variables,placeholders.
@@ -45,6 +45,24 @@ class Operation(Node):
     def compute_gradient(self):
         raise NotImplementedError
 
+    def __add__(self, other):
+        raise NotImplementedError
+
+    def __neg__(self):
+        raise NotImplementedError
+
+    def __sub__(self, other):
+        raise NotImplementedError
+
+    def __mul__(self, other):
+        raise NotImplementedError
+
+    # def __matmul__(self, other):
+    #     raise NotImplementedError
+
+    def dot(self, other):
+        raise NotImplementedError
+
 
 class Add(Operation):
     """ An addition operation.
@@ -69,6 +87,23 @@ class Add(Operation):
     def compute_gradient(self):
         # TODO Add.compute_gradient
         pass
+
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
+    # def __matmul__(self, other):
+    #     return MatMul(self, other)
+    def dot(self, other):
+        return MatMul(self, other)
 
 
 class Multiply(Operation):
@@ -95,6 +130,24 @@ class Multiply(Operation):
         # TODO Multiply.compute_gradient
         pass
 
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
+    # def __matmul__(self, other):
+    #     return MatMul(self, other)
+
+    def dot(self, other):
+        return MatMul(self, other)
+
 
 class MatMul(Operation):
     """ Matrix multiplication operation.
@@ -107,7 +160,7 @@ class MatMul(Operation):
         :param y: The second input node.
         :type y: Object of `Operation`, `Variable` or `Placeholder`.
         """
-        super(MatMul, self).__init__(x, y)
+        super(MatMul, self).__init__(x, y, name=name)
 
     def compute_output(self):
         """ Compute and return the multiplication operation result.
@@ -119,3 +172,159 @@ class MatMul(Operation):
     def compute_gradient(self):
         # TODO MatMul.compute_gradient
         pass
+
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
+    # def __matmul__(self, other):
+    #     return MatMul(self, other)
+
+    def dot(self, other):
+        return MatMul(self, other)
+
+
+class Negative(Operation):
+    def __init__(self, x, name=None):
+        """ Negative constructor
+        :param x: The input node
+        :type x: Object of `Operation`, `Variable` or `Placeholder`.
+        """
+        super(Negative, self).__init__(x, name=name)
+
+    def compute_output(self):
+        x, = self.input_nodes
+        self.output_value = -x.output_value
+        return self.output_value
+
+    def compute_gradient(self):
+        # TODO Negative.compute_gradient
+        pass
+
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
+    # def __matmul__(self, other):
+    #     return MatMul(self, other)
+
+    def dot(self, other):
+        return MatMul(self, other)
+
+
+class Log(Operation):
+    def __init__(self, x, name=None):
+        """Log constructor
+        :param x: The input node
+        :type x: Object of `Operation`, `Variable` or `Placeholder`.
+        """
+        super(Log, self).__init__(x, name=name)
+
+    def compute_output(self):
+        x, = self.input_nodes
+        self.output_value = backend.log(x.output_value)
+        return self.output_value
+
+    def compute_gradient(self):
+        # TODO Negative.compute_gradient
+        pass
+
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
+    # def __matmul__(self, other):
+    #     return MatMul(self, other)
+
+    def dot(self, other):
+        return MatMul(self, other)
+
+
+class Square(Operation):
+    def __init__(self, x, name=None):
+        """ Square Constructor
+        :param x: The input node
+        :type x: Object of `Operation`, `Variable` or `Placeholder`.
+        """
+        super(Square, self).__init__(x, name=name)
+
+    def compute_output(self):
+        x, = self.input_nodes
+        self.output_value = backend.square(x.output_value)
+        return self.output_value
+
+    def compute_gradient(self):
+        pass
+
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
+    # def __matmul__(self, other):
+    #     return MatMul(self, other)
+
+    def dot(self, other):
+        return MatMul(self, other)
+
+
+class Exp(Operation):
+    def __init__(self, x, name=None):
+        super(Exp, self).__init__(x, name=name)
+
+    def compute_output(self):
+        x, = self.input_nodes
+        self.output_value = backend.exp(x.output_value)
+        return self.output_value
+
+    def compute_gradient(self):
+        pass
+
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
+    # def __matmul__(self, other):
+    #     return MatMul(self, other)
+
+    def dot(self, other):
+        return MatMul(self, other)
