@@ -7,7 +7,8 @@
 
 
 class Node(object):
-    def __init__(self):
+    def __init__(self, name=None):
         self.output_value = None
         self.output_nodes = []
         self.graph = None
+        self.name = name

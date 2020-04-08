@@ -20,7 +20,7 @@ class Operation(Node):
         :type input_nodes: variables,placeholders.
         """
 
-        super(Operation, self).__init__()  # PEP 3135
+        super(Operation, self).__init__(name=name)  # PEP 3135
         # Check the type of input_nodes
         for node in input_nodes:
             assert isinstance(node, Node), "Wrong type, input_nodes can only be Variable, Operation, Placeholder"
@@ -84,9 +84,28 @@ class Add(Operation):
         self.output_value = backend.add(x.output_value, y.output_value)
         return self.output_value
 
-    def compute_gradient(self):
-        # TODO Add.compute_gradient
-        pass
+    def compute_gradient(self, grad=None):
+        """Compute and return the value of Add operation
+        """
+        if grad is None:
+            grad = backend.ones_like(self.output_value)
+        x, y = [node.node_value for node in self.input_nodes]
+
+        grad_wrt_x = grad
+        while backend.ndim(grad_wrt_x) > len(backend.shape(x)):
+            grad_wrt_x = backend.sum(grad_wrt_x, axis=0)
+        for axis, size in enumerate(backend.shape(x)):
+            if size == 1:
+                grad_wrt_x = backend.sum(grad_wrt_x, axis=axis, keepdims=True)
+
+        grad_wrt_y = grad
+        while backend.ndim(grad_wrt_y) > len(backend.shape(y)):
+            grad_wrt_y = backend.sum(grad_wrt_y, axis=0)
+        for axis, size in enumerate(backend.shape(y)):
+            if size == 1:
+                grad_wrt_y = backend.sum(grad_wrt_y, axis=axis, keepdims=True)
+
+        return [grad_wrt_x, grad_wrt_y]
 
     def __add__(self, other):
         return Add(self, other)
@@ -117,7 +136,7 @@ class Multiply(Operation):
         :param y: The second input node.
         :type y: Object of `Operation`, `Variable` or `Placeholder`.
         """
-        super(Multiply, self).__init__(x, y)
+        super(Multiply, self).__init__(x, y, name=name)
 
     def compute_output(self):
         """ Compute and return the multiplication operation result.
@@ -126,9 +145,29 @@ class Multiply(Operation):
         self.output_value = backend.multiply(x.output_value, y.output_value)
         return self.output_value
 
-    def compute_gradient(self):
-        # TODO Multiply.compute_gradient
-        pass
+    def compute_gradient(self, grad=None):
+        """Compute and return the value of Multiply operation
+        """
+        x, y = [node.output_value for node in self.input_nodes]
+
+        if grad is None:
+            grad = backend.ones_like(self.output_value)
+
+        grad_wrt_x = grad * y
+        while backend.ndim(grad_wrt_x) > len(backend.shape(x)):
+            grad_wrt_x = backend.sum(grad_wrt_x, axis=0)
+        for axis, size in enumerate(backend.shape(x)):
+            if size == 1:
+                grad_wrt_x = backend.sum(grad_wrt_x, axis=axis, keepdims=True)
+
+        grad_wrt_y = grad * x
+        while backend.ndim(grad_wrt_y) > len(backend.shape(y)):
+            grad_wrt_y = backend.sum(grad_wrt_y, axis=0)
+        for axis, size in enumerate(backend.shape(y)):
+            if size == 1:
+                grad_wrt_y = backend.sum(grad_wrt_y, axis=axis, keepdims=True)
+
+        return [grad_wrt_x, grad_wrt_y]
 
     def __add__(self, other):
         return Add(self, other)
@@ -169,9 +208,17 @@ class MatMul(Operation):
         self.output_value = backend.dot(x.output_value, y.output_value)
         return self.output_value
 
-    def compute_gradient(self):
-        # TODO MatMul.compute_gradient
-        pass
+    def compute_gradient(self, grad=None):
+        """Compute and return the value of MatMul operation
+        """
+        if grad is None:
+            grad = backend.ones_like(self.output_value)
+        x, y = [node.output_value for node in self.input_nodes]
+
+        dx = backend.dot(grad, backend.transpose(y))
+        dy = backend.dot(backend.transpose(x), grad)
+
+        return [dx, dy]
 
     def __add__(self, other):
         return Add(self, other)
@@ -205,9 +252,13 @@ class Negative(Operation):
         self.output_value = -x.output_value
         return self.output_value
 
-    def compute_gradient(self):
-        # TODO Negative.compute_gradient
-        pass
+    def compute_gradient(self, grad=None):
+        """Compute and return the value of Negative operation
+        """
+        if grad is None:
+            grad = backend.ones_like(self.output_value)
+        dx = backend.multiply(-1, grad)
+        return [dx]
 
     def __add__(self, other):
         return Add(self, other)
@@ -241,9 +292,16 @@ class Log(Operation):
         self.output_value = backend.log(x.output_value)
         return self.output_value
 
-    def compute_gradient(self):
-        # TODO Negative.compute_gradient
-        pass
+    def compute_gradient(self, grad=None):
+        """Compute and return the value of Log operation
+        """
+        x = self.input_nodes[0].output_value
+        if grad is None:
+            grad = backend.ones_like(self.output_value)
+        if x == float('inf') or x == float('-inf'):
+            return grad * float('inf')
+        else:
+            return grad * 1 / x
 
     def __add__(self, other):
         return Add(self, other)

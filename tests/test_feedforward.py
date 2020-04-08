@@ -21,9 +21,8 @@ from SemiFlow.engine import *
 
 with Graph().as_default():
     A = Variable([[1, 0], [0, -1]])
-    b = Variable([1, 1])
-
     x = Variable([1, 1])
+    b = Variable([1, 1])
 
     y = A.dot(x)
 

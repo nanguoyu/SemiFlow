@@ -27,6 +27,7 @@ Progress
 Progress
 - [ ] computational graph
     - [x] feedforward
+    - [x] numpy style operator
     - [ ] compute gradient
 - [ ] Tensor support
 - [ ] Auto differentiate
