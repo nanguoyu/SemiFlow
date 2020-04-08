@@ -25,10 +25,10 @@ Progress
 
 ## Tensorflow style design
 Progress
-- [ ] computational graph
+- [x] computational graph
     - [x] feedforward
     - [x] numpy style operator
-    - [ ] compute gradient
+    - [x] compute gradient
 - [ ] Tensor support
 - [ ] Auto differentiate
 

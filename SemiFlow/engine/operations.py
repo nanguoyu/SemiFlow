@@ -335,8 +335,15 @@ class Square(Operation):
         self.output_value = backend.square(x.output_value)
         return self.output_value
 
-    def compute_gradient(self):
-        pass
+    def compute_gradient(self, grad=None):
+        """Compute and return the value of Square operation
+        """
+        input_value = self.input_nodes[0].output_value
+
+        if grad is None:
+            grad = backend.ones_like(self.output_value)
+
+        return grad * backend.multiply(2.0, input_value)
 
     def __add__(self, other):
         return Add(self, other)
@@ -366,8 +373,13 @@ class Exp(Operation):
         self.output_value = backend.exp(x.output_value)
         return self.output_value
 
-    def compute_gradient(self):
-        pass
+    def compute_gradient(self, grad=None):
+        """Compute and return the value of Exp operation
+        """
+        if grad is None:
+            grad = backend.ones_like(self.output_value)
+        x, = self.input_nodes[0].output_value
+        return backend.exp(x) * grad
 
     def __add__(self, other):
         return Add(self, other)
