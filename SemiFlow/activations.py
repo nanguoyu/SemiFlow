@@ -7,7 +7,50 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from .engine import backend
+from .engine import backend, DEFAULT_GRAPH, Node, Add, MatMul, Multiply, Square, Log, Negative, Operation, Variable, \
+    Placeholder
+
+
+class Sigmoid(Operation):
+    """ An sigmoid operation.
+    """
+
+    def __init__(self, x, name=None):
+        """Sigmoid constructor.
+        """
+        super(Sigmoid, self).__init__(x, name=None)
+
+    def compute_output(self):
+        """ Compute and return the value of Sigmoid operation.
+        """
+        x, = self.input_nodes
+        self.output_value = 1 / (1 + backend.exp(-x.output_value))
+        return self.output_value
+
+    def compute_gradient(self, grad=None):
+        """Compute and return the value of Sigmoid operation
+        """
+        x = self.input_nodes[0].output_value
+        if grad is None:
+            grad = backend.ones_like(self.output_value)
+        return grad * self.output_value * (1 - self.output_value)
+
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
+    # def __matmul__(self, other):
+    #     return MatMul(self, other)
+    def dot(self, other):
+        return MatMul(self, other)
 
 
 def sigmoid(x):
