@@ -53,6 +53,53 @@ class Sigmoid(Operation):
         return MatMul(self, other)
 
 
+class ReLU(Operation):
+    """An ReLu Operation
+    """
+
+    def __init__(self, x, name=None):
+        """Sigmoid constructor.
+        """
+        super(ReLU, self).__init__(x, name=None)
+
+    def compute_output(self):
+        """ Compute and return the value of ReLu operation.
+        """
+        x, = self.input_nodes
+        self.output_value = backend.max([x.output_value, 0])
+        return self.output_value
+
+    def compute_gradient(self, grad=None):
+        """Compute and return the value of Sigmoid operation
+              """
+        x = self.input_nodes[0].output_value
+        if grad is None:
+            grad = backend.ones_like(self.output_value)
+        if self.output_value <= 0:
+            """ Let d_ReLu(0) = 0
+            """
+            return grad * 0
+        else:
+            return grad * 1
+
+    def __add__(self, other):
+        return Add(self, other)
+
+    def __neg__(self):
+        return Negative(self)
+
+    def __sub__(self, other):
+        return Add(self, Negative(other))
+
+    def __mul__(self, other):
+        return Multiply(self, other)
+
+    # def __matmul__(self, other):
+    #     return MatMul(self, other)
+    def dot(self, other):
+        return MatMul(self, other)
+
+
 def sigmoid(x):
     """Sigmoid activation function
 

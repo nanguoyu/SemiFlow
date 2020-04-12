@@ -4,7 +4,7 @@
 @Date : 2020/4/6
 """
 from SemiFlow.engine import *
-
+from SemiFlow.activations import Sigmoid, ReLU
 # with Graph().as_default():
 #     A = Variable([[1, 0], [0, -1]])
 #     b = Variable([1, 1])
@@ -27,7 +27,6 @@ with Graph().as_default():
     y = A.dot(x)
 
     z = y + b
-
     with Session() as session:
         result = session.run(z)
         print(result)
