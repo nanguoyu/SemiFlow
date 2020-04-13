@@ -13,11 +13,11 @@ class Variable(Node):
     """This is a class for trainable variables
     """
 
-    def __init__(self, initial_value=None):
+    def __init__(self, initial_value=None, name=None):
         """variable constructor
         :param initial_value: initial value of current variable
         """
-        super(Variable, self).__init__()
+        super(Variable, self).__init__(name=name)
         self.initial_value = initial_value
         # nodes for recursive
         self.output_nodes = []

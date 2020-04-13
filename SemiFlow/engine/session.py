@@ -7,7 +7,7 @@
 from . import DEFAULT_GRAPH
 from . import Operation
 from . import Placeholder
-
+from . import Node
 
 class Session(object):
     def __init__(self):
@@ -38,7 +38,7 @@ class Session(object):
         return operation.output_value
 
     def _get_prerequisite(self, operation):
-        assert isinstance(operation, Operation), "Wrong type, Operation is needed"
+        assert isinstance(operation, Node), "Wrong type, Node is needed"
         postorder_nodes = []
 
         def postorder_traverse(opt):

@@ -10,8 +10,8 @@ from . import Add, MatMul, Multiply, Square, Log, Negative
 
 
 class Placeholder(Node):
-    def __init__(self):
-        super(Placeholder, self).__init__()
+    def __init__(self, name=None):
+        super(Placeholder, self).__init__(name=name)
         self.output_value = None
 
         # Nodes that receive this placeholder node as input.

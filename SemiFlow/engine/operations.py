@@ -68,14 +68,14 @@ class Add(Operation):
     """ An addition operation.
     """
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, name=None):
         """ Addition constructor.
         :param x: The first input node.
         :type x: Object of `Operation`, `Variable` or `Placeholder`.
         :param y: The second input node.
         :type y: Object of `Operation`, `Variable` or `Placeholder`.
         """
-        super(Add, self).__init__(x, y)
+        super(Add, self).__init__(x, y, name=name)
 
     def compute_output(self):
         """ Compute and return the value of addition operation.
@@ -89,8 +89,7 @@ class Add(Operation):
         """
         if grad is None:
             grad = backend.ones_like(self.output_value)
-        x, y = [node.node_value for node in self.input_nodes]
-
+        x, y = [node.output_value for node in self.input_nodes]
         grad_wrt_x = grad
         while backend.ndim(grad_wrt_x) > len(backend.shape(x)):
             grad_wrt_x = backend.sum(grad_wrt_x, axis=0)
@@ -104,7 +103,6 @@ class Add(Operation):
         for axis, size in enumerate(backend.shape(y)):
             if size == 1:
                 grad_wrt_y = backend.sum(grad_wrt_y, axis=axis, keepdims=True)
-
         return [grad_wrt_x, grad_wrt_y]
 
     def __add__(self, other):
@@ -129,7 +127,7 @@ class Multiply(Operation):
     """ Multiplication operation.
     """
 
-    def __init__(self, x, y, name=None):
+    def __init__(self, x, y, name='multiply'):
         """ Multiplication constructor.
         :param x: The first input node.
         :type x: Object of `Operation`, `Variable` or `Placeholder`.
@@ -152,7 +150,6 @@ class Multiply(Operation):
 
         if grad is None:
             grad = backend.ones_like(self.output_value)
-
         grad_wrt_x = grad * y
         while backend.ndim(grad_wrt_x) > len(backend.shape(x)):
             grad_wrt_x = backend.sum(grad_wrt_x, axis=0)
@@ -205,6 +202,7 @@ class MatMul(Operation):
         """ Compute and return the multiplication operation result.
         """
         x, y = self.input_nodes
+        print(x.name, y.name)
         self.output_value = backend.dot(x.output_value, y.output_value)
         return self.output_value
 
@@ -240,7 +238,7 @@ class MatMul(Operation):
 
 
 class Negative(Operation):
-    def __init__(self, x, name=None):
+    def __init__(self, x, name="negative"):
         """ Negative constructor
         :param x: The input node
         :type x: Object of `Operation`, `Variable` or `Placeholder`.
@@ -257,7 +255,7 @@ class Negative(Operation):
         """
         if grad is None:
             grad = backend.ones_like(self.output_value)
-        dx = backend.multiply(-1, grad)
+        dx = -grad
         return [dx]
 
     def __add__(self, other):
