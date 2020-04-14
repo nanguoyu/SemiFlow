@@ -12,7 +12,10 @@ for machine learning"。我对自己动手实现深度学习框架很感兴趣�
 
 
 ## A naive example.
-Blog: [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
+Blogs
+ - [[SemiFlow 动手实现深度学习框架 00] 初步的计划](https://www.nanguoyu.com/semiflow-00)
+    - Code: [A naive dense layer](./A%20naive%20example)
+ - [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
 
 Code: [A naive dense layer](./A%20naive%20example)
 
@@ -30,7 +33,7 @@ Progress
     - [x] numpy style operator
     - [x] compute gradient
 - [ ] Tensor support
-- [ ] Auto differentiate
+- [x] Auto differentiate
 
 ## Complex layer
 Progress
@@ -45,5 +48,9 @@ Progress
 ## Advance 
 - [ ] CUDA support
 
-## other
+## Support Docs
 - [ ] Examples and other docs
+
+## Reference
+- [The Supervised Machine Learning book(An upcoming textbook)](http://smlbook.org/)
+- [simpleflow](https://github.com/PytLab/simpleflow)
