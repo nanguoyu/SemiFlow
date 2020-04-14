@@ -56,9 +56,6 @@ class ReduceSum(Operation):
 
         if grad is None:
             grad = backend.ones_like(self.output_value)
-
-        print("The grad of ", self.name, grad)
-
         output_shape = backend.array(backend.shape(input_value))
         output_shape[self.axis] = 1.0
         tile_scaling = backend.shape(input_value) // output_shape

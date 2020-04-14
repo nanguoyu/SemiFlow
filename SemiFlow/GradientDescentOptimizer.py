@@ -26,11 +26,11 @@ class MinimizationOperation(Operation):
 
     def compute_output(self):
         grad_table = compute_gradients(self.loss_opt)
-        print("\t [loss]:", self.loss_opt.output_value)
+        # print("\t [loss value]:", self.loss_opt.output_value)
         for var in DEFAULT_GRAPH.variables:
             if var in grad_table:
                 grad = grad_table[var]
-                print("\t [grad]", grad)
+                # print("\t [grad of ", var.name, "]", grad)
                 old_value = var.output_value
-                var.output_value = var.output_value - self.learning_rate * grad
-                print("\t [", var.name, "] changed from", old_value, "to", var.output_value)
+                var.output_value -= self.learning_rate * grad
+                # print("\t [", var.name, "] changed from", old_value, "to", var.output_value)

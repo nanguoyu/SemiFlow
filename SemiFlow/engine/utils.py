@@ -50,15 +50,15 @@ def compute_gradients(target_op):
                     grads_wrt_node_output.append(grad_wrt_node_output)
 
             # Sum all gradients wrt node's output.
-            if node.name == 'b':
-                print('The grad of b is ', backend.sum(grads_wrt_node_output))
-            if node.name == 'y-y_':
-                print('The grad of y-y_ is ', backend.sum(grads_wrt_node_output))
-            if node.name == 'Square':
-                print('The grad of square is ', backend.sum(grads_wrt_node_output))
-            if node.name == 'loss':
-                print('The grad of loss is ', backend.sum(grads_wrt_node_output))
-            tot_grad_wrt_node_output = backend.sum(grads_wrt_node_output)
+            # if node.name == 'b':
+            #     print('The grad of b is ', sum(grads_wrt_node_output))
+            # if node.name == 'y-y_':
+            #     print('The grad of y-y_ is ', sum(grads_wrt_node_output))
+            # if node.name == 'Square':
+            #     print('The grad of square is ', sum(grads_wrt_node_output))
+            # if node.name == 'negative':
+            #     print('The grad of negative is ', sum(grads_wrt_node_output))
+            tot_grad_wrt_node_output = sum(grads_wrt_node_output)
             grad_table[node] = tot_grad_wrt_node_output
 
         # Put adjecent nodes to queue.

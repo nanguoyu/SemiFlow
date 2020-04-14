@@ -256,7 +256,7 @@ class Negative(Operation):
         if grad is None:
             grad = backend.ones_like(self.output_value)
         dx = -grad
-        return [dx]
+        return dx
 
     def __add__(self, other):
         return Add(self, other)
@@ -340,7 +340,6 @@ class Square(Operation):
 
         if grad is None:
             grad = backend.ones_like(self.output_value)
-
         return grad * backend.multiply(2.0, input_value)
 
     def __add__(self, other):

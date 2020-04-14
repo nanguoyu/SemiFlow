@@ -9,6 +9,7 @@ from . import Operation
 from . import Placeholder
 from . import Node
 
+
 class Session(object):
     def __init__(self):
         self.graph = DEFAULT_GRAPH
