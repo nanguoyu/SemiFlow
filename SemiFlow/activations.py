@@ -9,6 +9,10 @@ from __future__ import division
 from __future__ import print_function
 from .engine import backend, DEFAULT_GRAPH, Node, Add, MatMul, Multiply, Square, Log, Negative, Operation, Variable, \
     Placeholder
+from .engine.utils import deprecated
+
+
+# TODO modify activation methods to class
 
 
 class Sigmoid(Operation):
@@ -100,6 +104,7 @@ class ReLU(Operation):
         return MatMul(self, other)
 
 
+@deprecated
 def sigmoid(x):
     """Sigmoid activation function
 
@@ -112,6 +117,7 @@ def sigmoid(x):
     return 1 / (1 + backend.exp(-x))
 
 
+@deprecated
 def relu(x):
     """ReLu activation function
 
@@ -125,6 +131,7 @@ def relu(x):
     return backend.max(x, 0)
 
 
+@deprecated
 def tanh(x):
     """tanh activation function
 
@@ -137,6 +144,7 @@ def tanh(x):
     return (backend.exp(x) - backend.exp(-x)) / (backend.exp(x) + backend.exp(-x))
 
 
+@deprecated
 def softplus(x):
     """soft activation function
 
@@ -149,6 +157,7 @@ def softplus(x):
     return backend.log(1 + backend.exp(x))
 
 
+@deprecated
 def gelu(x):
     """GELU activation function
     The original definition of GELU is x*cdf(x). https://arxiv.org/abs/1606.08415

@@ -5,6 +5,8 @@
 """
 from . import backend
 from queue import Queue
+import warnings
+import functools
 
 
 def compute_gradients(target_op):
@@ -50,14 +52,6 @@ def compute_gradients(target_op):
                     grads_wrt_node_output.append(grad_wrt_node_output)
 
             # Sum all gradients wrt node's output.
-            # if node.name == 'b':
-            #     print('The grad of b is ', sum(grads_wrt_node_output))
-            # if node.name == 'y-y_':
-            #     print('The grad of y-y_ is ', sum(grads_wrt_node_output))
-            # if node.name == 'Square':
-            #     print('The grad of square is ', sum(grads_wrt_node_output))
-            # if node.name == 'negative':
-            #     print('The grad of negative is ', sum(grads_wrt_node_output))
             tot_grad_wrt_node_output = sum(grads_wrt_node_output)
             grad_table[node] = tot_grad_wrt_node_output
 
@@ -67,5 +61,21 @@ def compute_gradients(target_op):
                 if input_node not in visited:
                     visited.add(input_node)
                     queue.put(input_node)
-    # print("[end]")
     return grad_table
+
+
+def deprecated(func):
+    """This is a decorator which can be used to mark functions
+    as deprecated. It will result in a warning being emitted
+    when the function is used."""
+
+    @functools.wraps(func)
+    def new_func(*args, **kwargs):
+        warnings.simplefilter('always', DeprecationWarning)  # turn off filter
+        warnings.warn("Call to deprecated function {}.".format(func.__name__),
+                      category=DeprecationWarning,
+                      stacklevel=2)
+        warnings.simplefilter('default', DeprecationWarning)  # reset filter
+        return func(*args, **kwargs)
+
+    return new_func
