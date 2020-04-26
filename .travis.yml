@@ -16,8 +16,8 @@ install:
 
 script:
   - pytest
-  - coverage run ./tests/test_compute_gradients.py
-  - coverage run ./tests/test_feedforward.py
+  - coverage run -p ./tests/test_compute_gradients.py
+  - coverage run -p ./tests/test_feedforward.py
   - coverage combine
 
 after_success:
