@@ -10,6 +10,12 @@ I am going to implement a neural network framework in a about month. :)
 并且最近完成了"Statistical machine learning", "Artificial intelligence","Natural computation 
 for machine learning"。我对自己动手实现深度学习框架很感兴趣。SemiFlow就是用来练手的。
 
+## Install
+
+``` 
+git https://github.com/nanguoyu/SemiFlow.git
+pip install .
+```
 
 ## A naive example.
 Blogs
@@ -18,13 +24,6 @@ Blogs
  - [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
 
 Code: [A naive dense layer](./A%20naive%20example)
-
-Progress
-- [x] forward propagation
-- [x] backward propagation
-- [x] gradient based method
-- [x] ReLU
-- [x] Sigmoid
 
 ## Tensorflow style design
 Progress
