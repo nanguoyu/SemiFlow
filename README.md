@@ -1,6 +1,7 @@
 
 
 # SemiFlow
+[![Build Status](https://travis-ci.com/nanguoyu/SemiFlow.svg?branch=master)](https://travis-ci.com/nanguoyu/SemiFlow)
 
 SemiFlow is a neural network framework for machine learning.
 
