@@ -14,7 +14,11 @@ install:
   - pip install -r requirements.txt
   - pip install .
 
-script: pytest
+script:
+  - pytest
+  - coverage run ./tests/test_compute_gradients.py
+  - coverage run ./tests/test_feedforward.py
+  - coverage combine
 
 after_success:
   - codecov
