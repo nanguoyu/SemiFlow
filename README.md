@@ -17,6 +17,7 @@ for machine learning"。我对自己动手实现深度学习框架很感兴趣�
 
 ``` 
 git https://github.com/nanguoyu/SemiFlow.git
+cd SemiFlow
 pip install .
 ```
 
