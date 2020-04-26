@@ -16,7 +16,7 @@ setuptools.setup(
     maintainer='Dong Wang (nanguoyu)',
     maintainer_email='admin@nanguoyu.com',
     packages=setuptools.find_packages(),
-    install_requires=['numpy'],
+    install_requires=['numpy', 'matplotlib'],
     setup_requires=["numpy>=1.14.0"],
     python_requires='>=3.6'
 )
