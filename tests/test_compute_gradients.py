@@ -4,8 +4,8 @@
 @Date : 2020/4/12
 """
 from SemiFlow.engine import *
-from SemiFlow.losses import ReduceSum
-from SemiFlow.GradientDescentOptimizer import GradientDescentOptimizer
+from SemiFlow.engine.losses import ReduceSum
+from SemiFlow.engine.GradientDescentOptimizer import GradientDescentOptimizer
 from SemiFlow.engine.session import Session
 import numpy as np
 import matplotlib.pyplot as plt

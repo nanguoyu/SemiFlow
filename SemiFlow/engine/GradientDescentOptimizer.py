@@ -3,8 +3,8 @@
 @Author: Dong Wang
 @Date : 2020/4/12
 """
-from .engine import Operation
-from .engine import compute_gradients, DEFAULT_GRAPH
+from SemiFlow.engine import Operation
+from SemiFlow.engine import compute_gradients, DEFAULT_GRAPH
 
 
 class GradientDescentOptimizer(object):

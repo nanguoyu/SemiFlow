@@ -24,6 +24,6 @@ y_train = np.append(np.ones(200), np.zeros(200))
 
 nn = Dense()
 
-nn.train(x_train=x_train,y_train=y_train,learning_rate=0.01,epochs=110)
+nn.fit(x_train=x_train, y_train=y_train, learning_rate=0.01, epochs=110)
 
 nn.evaluate(x_train,y_train)

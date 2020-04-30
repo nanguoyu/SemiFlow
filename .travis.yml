@@ -18,6 +18,7 @@ script:
   - pytest
   - coverage run -p ./tests/test_compute_gradients.py
   - coverage run -p ./tests/test_feedforward.py
+  - coverage run -p ./tests/test_mlp.py
   - coverage combine
 
 after_success:

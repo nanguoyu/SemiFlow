@@ -8,8 +8,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from .engine import backend
-from .engine import Operation
+from SemiFlow.engine import backend
+from SemiFlow.engine import Operation
 
 
 def binary_cross_entropy(y, p):
