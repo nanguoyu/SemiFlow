@@ -19,12 +19,9 @@ class Dense(Layer):
         """
         Args:
             units: number of neural, dimensionality of output
-
             activation: activation function
                 If you don't specify anything linear activation is applied
-
             kernel_initializer: Initializer for the `kernel` weights matrix
-
             bias_initializer: Initializer for the bias vector
         """
         super(Dense, self).__init__(**kwargs)

@@ -30,16 +30,13 @@ class Layer(object):
             self.input_shape = tuple(kwargs['input_shape'])
         if 'name' in kwargs:
             self.name = kwargs.get('name')
-        else:
-            # TODO A global layer manager is needed.
-            self.name = 'layer_x'
 
-    def ForwardPropagation(self):
+    def ForwardPropagation(self, **kwargs):
         """Forward propagation
         """
         raise NotImplementedError
 
-    def BackwardPropagation(self):
+    def BackwardPropagation(self, **kwargs):
         """Backward propagation
         """
         raise NotImplementedError
