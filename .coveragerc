@@ -1,4 +1,3 @@
-[run]
-  omit =
-  test_*.py
-  */test/test_*.py
+[report]
+omit =
+    test/*
