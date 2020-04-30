@@ -38,6 +38,18 @@ Progress
 - [ ] Tensor support
 - [x] Auto differentiate
 
+## Sequential Model 
+> In the development, I find it is hard for me to implement a deep learning 
+> framework support functional model like the Pytorch. As a result, I changed
+> the plan to develop a sequential model after finish tensorflow style design.
+
+>Progress
+- [ ] Dense layer
+- [ ] Model manager for training
+- [ ] Optimizer
+- [ ] Activation function
+    - [ ] ReLU
+    - [ ] Sigmoid
 ## Complex layer
 Progress
 - [ ] Convolutional layer
