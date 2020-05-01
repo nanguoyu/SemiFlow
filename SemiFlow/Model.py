@@ -4,6 +4,7 @@
 @Date : 2020/3/31
 """
 from .engine.core import backend
+from .layer.core import Layer
 
 
 class Model(object):
@@ -71,24 +72,26 @@ class Sequential(Model):
                 optimizer=None,
                 **kwargs):
         """
+
         Args:
             loss: loss function
             optimizer: learning method
+
         """
-        # TODO Model.Sequential.compile
+        # TODO Model.Sequential.compile.
+        # Add loss function and optimizer
         pass
 
     def add(self, layer):
         """add a layer to the model
 
         Args:
-            layer:
-
-        Returns:
+            layer: a instance of layer
 
         """
-        # TODO Model.Sequential.add
-        pass
+        if not isinstance(layer, Layer):
+            raise TypeError('Wrong layer type')
+        self.layers.append(layer)
 
     def summary(self):
         # TODO Model.Sequential.summary

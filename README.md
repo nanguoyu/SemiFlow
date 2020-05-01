@@ -48,8 +48,9 @@ Progress
 - [ ] Model manager for training
 - [ ] Optimizer
 - [ ] Activation function
-    - [ ] ReLU
-    - [ ] Sigmoid
+    - [x] ReLU
+    - [x] Sigmoid
+    - [x] tanh
 ## Complex layer
 Progress
 - [ ] Convolutional layer
