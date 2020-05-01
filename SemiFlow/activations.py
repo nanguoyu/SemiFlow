@@ -10,11 +10,9 @@ import six
 
 def get(act):
     if not act:
-        # TODO Return Linear
-        pass
+        return Linear()
     elif isinstance(act, six.string_types):
-        # TODO Return activation function
-        pass
+        return searchActivation(act)
     elif callable(act):
         return act
     else:
@@ -26,23 +24,17 @@ def searchActivation(activation_str: str):
     activation_str = activation_str.lower()
 
     if activation_str == 'sigmoid':
-        pass
+        return Sigmoid()
     elif activation_str == 'relu':
-        pass
-    elif activation_str == 'elu':
-        pass
-    elif activation_str == 'selu':
-        pass
+        return Relu()
     elif activation_str == 'tanh':
-        pass
+        return Tanh()
     elif activation_str == 'softmax':
         pass
     elif activation_str == 'linear':
-        pass
+        return Linear()
     elif activation_str == 'softplus':
-        pass
-    elif activation_str == 'softsign':
-        pass
+        return Softplus()
     else:
         raise ValueError('Could not find such activation ',
                          activation_str)
@@ -62,6 +54,18 @@ class Activation(Layer):
 
 # Activation classes
 # Sigmoid Relu tanh softplus gelu
+
+class Linear(Activation):
+    def __init__(self, **kwargs):
+        super(Linear, self).__init__(**kwargs)
+
+    def ForwardPropagation(self, inputs):
+        return inputs
+
+    def BackwardPropagation(self, grads):
+        # TODO review the derivative of Linear activation function
+        return 1
+
 
 class Sigmoid(Activation):
     def __init__(self, **kwargs):

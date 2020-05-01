@@ -39,19 +39,6 @@ class Sequential(Model):
         self.layers = []
         super(Sequential, self).__init__()
 
-    def evaluate(self,
-                 x=None,
-                 y=None,
-                 batch_size=None,
-                 verbose=1,  # TODO Model.Sequential.evaluate.verbose
-                 **kwargs):
-        # TODO Model.Sequential.evaluate
-        pass
-
-    def predict(self, **kwargs):
-        # TODO Model.Sequential.predict
-        pass
-
     def fit(self,
             x=None,
             y=None,
@@ -65,6 +52,19 @@ class Sequential(Model):
             steps_per_epoch=None,
             **kwargs):
         # TODO Model.Sequential.train
+        pass
+
+    def evaluate(self,
+                 x=None,
+                 y=None,
+                 batch_size=None,
+                 verbose=1,  # TODO Model.Sequential.evaluate.verbose
+                 **kwargs):
+        # TODO Model.Sequential.evaluate
+        pass
+
+    def predict(self, **kwargs):
+        # TODO Model.Sequential.predict
         pass
 
     def compile(self,
@@ -91,8 +91,13 @@ class Sequential(Model):
         """
         if not isinstance(layer, Layer):
             raise TypeError('Wrong layer type')
+        layer.name = layer.__class__.__name__ + str(len(self.layers))
         self.layers.append(layer)
 
     def summary(self):
         # TODO Model.Sequential.summary
-        pass
+        print("\n" + 20 * "=")
+        for layer in self.layers:
+            print(layer.name)
+            print(20 * "-")
+        print(20 * "=")
