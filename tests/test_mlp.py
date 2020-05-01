@@ -14,18 +14,20 @@ num_classes = 10
 batch_size = 128
 epochs = 20
 
-model = Sequential()
-model.add(Dense(units=512, activation='relu', input_shape=(784,)))
-model.add(Dense(units=512, activation='relu', input_shape=(784,)))
-model.add(Dense(num_classes, activation='softmax'))
 
-model.summary()
+def test_mlp():
+    model = Sequential()
+    model.add(Dense(units=512, activation='relu', input_shape=(784,)))
+    model.add(Dense(units=512, activation='relu', input_shape=(784,)))
+    model.add(Dense(num_classes, activation='softmax'))
 
-model.compile(loss='categorical_crossentropy', optimizer='RMSprop')
+    model.summary()
 
-history = model.fit(x_train, y_train,
-                    batch_size=batch_size,
-                    epochs=epochs,
-                    verbose=1,
-                    validation_data=(None, None))
-score = model.evaluate(x_test, y_test, verbose=0)
+    model.compile(loss='categorical_crossentropy', optimizer='RMSprop')
+
+    history = model.fit(x_train, y_train,
+                        batch_size=batch_size,
+                        epochs=epochs,
+                        verbose=1,
+                        validation_data=(None, None))
+    score = model.evaluate(x_test, y_test, verbose=0)

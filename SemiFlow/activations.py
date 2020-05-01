@@ -50,6 +50,7 @@ def searchActivation(activation_str: str):
 
 class Activation(Layer):
     def __init__(self, **kwargs):
+        """Activation abstract class Constructor"""
         super(Activation, self).__init__(**kwargs)
 
     def ForwardPropagation(self, **kwargs):
@@ -58,6 +59,9 @@ class Activation(Layer):
     def BackwardPropagation(self, **kwargs):
         raise NotImplementedError
 
+
+# Activation classes
+# Sigmoid Relu tanh softplus gelu
 
 class Sigmoid(Activation):
     def __init__(self, **kwargs):
@@ -69,6 +73,43 @@ class Sigmoid(Activation):
     def BackwardPropagation(self, grads):
         return sigmoid(grads) * (1.0 - sigmoid(grads))
 
+
+class Relu(Activation):
+    def __init__(self, **kwargs):
+        super(Relu, self).__init__(**kwargs)
+
+    def ForwardPropagation(self, inputs):
+        return relu(inputs)
+
+    def BackwardPropagation(self, grads):
+        return grads > 0
+
+
+class Tanh(Activation):
+    def __init__(self, **kwargs):
+        super(Tanh, self).__init__(**kwargs)
+
+    def ForwardPropagation(self, inputs):
+        return tanh(inputs)
+
+    def BackwardPropagation(self, grads):
+        return 1 - tanh(grads) ** 2
+
+
+class Softplus(Activation):
+    def __init__(self, **kwargs):
+        super(Softplus, self).__init__(**kwargs)
+
+    def ForwardPropagation(self, inputs):
+        return softplus(inputs)
+
+    def BackwardPropagation(self, grads):
+        return 1 / (1 + backend.exp(grads))
+
+
+# TODO implement Gelu activation class
+
+# activation function
 
 def sigmoid(x):
     """Sigmoid activation function
