@@ -106,6 +106,14 @@ class Sequential(Model):
         if not loss:
             raise ValueError("loss is needed")
 
+        # Something about optimizer and loss
+        # Init params
+
+        # Add loss as the last layer. But it is not a layer.
+
+        # _init_params
+        # from loss-layer apply _get_prerequisite postorder_traverse
+
         self.isComplied = True
 
     def add(self, layer):

@@ -38,4 +38,7 @@ class Dense(Layer):
 
     def _init_params(self):
         # TODO init params by self.kernel_initializer and self.bias_initializer
+        units = self.units
+        if hasattr(self, 'input_shape'):
+            input_shape = self.input_shape
         self.params = {'kernel': None, 'bias': None}
