@@ -5,6 +5,7 @@
 """
 from .engine.core import backend
 from .layer.core import Layer
+from .utils import DataShuffle, BatchSpliter, split_train_val
 
 
 class Model(object):
@@ -36,8 +37,9 @@ class Model(object):
 
 class Sequential(Model):
     def __init__(self):
-        self.layers = []
         super(Sequential, self).__init__()
+        self.layers = []
+        self.isComplied = False
 
     def fit(self,
             x=None,
@@ -47,18 +49,37 @@ class Sequential(Model):
             verbose=1,  # TODO Model.Sequential.fit.verbose
             callbacks=None,
             validation_split=0.,
-            validation_data=None,
+            validation_data=None,  # TODO support other validation data.
             shuffle=True,
-            steps_per_epoch=None,
             **kwargs):
-        # TODO Model.Sequential.train
+        assert self.isComplied, "Model should be compiled before fit"
+
+        x_raw = x
+        y_raw = y
+
+        if shuffle:
+            x, y = DataShuffle(x, y)
+
+        if validation_split != 0:
+            x_train, y_train, x_val, y_val = split_train_val(x, y, validation_split)
+        else:
+            x_train, y_train = x, y
+
+        spliter = BatchSpliter(x_train, y_train, batch_size=batch_size)
+        for epoch in range(epochs):
+            for xbatch, ybatch in spliter.get_batch():
+                self._train(xbatch, ybatch)
+                # TODO Model.Sequential._train
+
+    def _train(self, x, y):
+        # self.loss, self.optimizer, layers, layers.layer.param
         pass
 
     def evaluate(self,
                  x=None,
                  y=None,
                  batch_size=None,
-                 verbose=1,  # TODO Model.Sequential.evaluate.verbose
+                 verbose=1,
                  **kwargs):
         # TODO Model.Sequential.evaluate
         pass
@@ -79,8 +100,13 @@ class Sequential(Model):
 
         """
         # TODO Model.Sequential.compile.
-        # Add loss function and optimizer
-        pass
+        if not optimizer:
+            # TODO implement the default optimizer
+            optimizer = 'Default'
+        if not loss:
+            raise ValueError("loss is needed")
+
+        self.isComplied = True
 
     def add(self, layer):
         """add a layer to the model
@@ -92,10 +118,14 @@ class Sequential(Model):
         if not isinstance(layer, Layer):
             raise TypeError('Wrong layer type')
         layer.name = layer.__class__.__name__ + str(len(self.layers))
+        if len(self.layers):
+            L = self.layers[-1]
+            L.outbound.append(layer)
+            layer.inbound.append(L)
+        # For sequential model, new layer will be added to the array.
         self.layers.append(layer)
 
     def summary(self):
-        # TODO Model.Sequential.summary
         print("\n" + 20 * "=")
         for layer in self.layers:
             print(layer.name)

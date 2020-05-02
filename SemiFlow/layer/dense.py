@@ -35,3 +35,7 @@ class Dense(Layer):
 
     def ForwardPropagation(self):
         pass
+
+    def _init_params(self):
+        # TODO init params by self.kernel_initializer and self.bias_initializer
+        self.params = {'kernel': None, 'bias': None}

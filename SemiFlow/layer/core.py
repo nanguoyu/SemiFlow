@@ -31,6 +31,13 @@ class Layer(object):
         if 'name' in kwargs:
             self.name = kwargs.get('name')
 
+        # The input layer of this layer
+        self.inbound = []
+        # The output layer of this layer
+        self.outbound = []
+        # The params
+        self.params = None
+
     def ForwardPropagation(self, **kwargs):
         """Forward propagation
         """
