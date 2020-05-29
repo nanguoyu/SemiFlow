@@ -6,6 +6,7 @@
 from .engine.core import backend
 from .layer.core import Layer
 from .utils import DataShuffle, BatchSpliter, split_train_val
+from .optimizer import getOptimizer
 
 
 class Model(object):
@@ -39,6 +40,7 @@ class Sequential(Model):
     def __init__(self):
         super(Sequential, self).__init__()
         self.layers = []
+        self.optimizer = None
         self.isComplied = False
 
     def fit(self,
@@ -65,15 +67,12 @@ class Sequential(Model):
         else:
             x_train, y_train = x, y
 
-        spliter = BatchSpliter(x_train, y_train, batch_size=batch_size)
-        for epoch in range(epochs):
-            for xbatch, ybatch in spliter.get_batch():
-                self._train(xbatch, ybatch)
-                # TODO Model.Sequential._train
+        self._train(x_train, y_train, epochs, batch_size)
 
-    def _train(self, x, y):
+    def _train(self, x, y, epochs, batch_size):
         # self.loss, self.optimizer, layers, layers.layer.param
-        pass
+        # Note self.optimizer manages the training process
+        self.optimizer.build(x, y, epochs, batch_size)
 
     def evaluate(self,
                  x=None,
@@ -105,6 +104,9 @@ class Sequential(Model):
             optimizer = 'Default'
         if not loss:
             raise ValueError("loss is needed")
+
+        # Optimizer
+        self.optimizer = getOptimizer(optimizer, loss=loss)
 
         # Something about optimizer and loss
         # Init params
