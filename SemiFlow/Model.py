@@ -106,6 +106,7 @@ class Sequential(Model):
             raise ValueError("loss is needed")
 
         # Optimizer
+
         self.optimizer = getOptimizer(optimizer, loss=loss)
 
         # Something about optimizer and loss

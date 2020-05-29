@@ -11,11 +11,9 @@ import six
 
 class Optimizer(object):
 
-    def __init__(self, learning_rate, loss, batch_size, epochs, **kwargs):
+    def __init__(self, loss, learning_rate, **kwargs):
         self.learning_rate = learning_rate
         self.loss = loss
-        self.batch_size = batch_size
-        self.epochs = epochs
         super(Optimizer, self).__init__(**kwargs)
 
     def _updateParameters(self):
@@ -24,11 +22,11 @@ class Optimizer(object):
 
 class GradientDescentOptimizer(Optimizer):
 
-    def __init__(self, learning_rate, loss, **kwargs):
-        self.learning_rate = learning_rate
-        self.loss = loss
+    def __init__(self, loss, learning_rate, **kwargs):
         self.spliter = None
-        super(GradientDescentOptimizer, self).__init__(**kwargs)
+        self.epochs = None
+        self.batch_size = None
+        super(GradientDescentOptimizer, self).__init__(loss, learning_rate, **kwargs)
 
     def build(self, x, y, epochs, batch_size):
         self.spliter = BatchSpliter(x, y, batch_size=batch_size)
@@ -56,7 +54,9 @@ def getOptimizer(opt, loss, learning_rate=0.0005):
     if isinstance(opt, six.string_types):
         # TODO Return initializers
         if opt == 'GD':
-            return GradientDescentOptimizer(learning_rate, loss, learning_rate=0.0005)
+            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate)
+        else:
+            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate)
     else:
         ValueError('Could not interpret '
                    'initializer:', opt)
