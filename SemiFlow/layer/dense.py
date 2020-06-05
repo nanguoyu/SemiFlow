@@ -27,8 +27,8 @@ class Dense(Layer):
         super(Dense, self).__init__(**kwargs)
         self.units = units
         self.activation = activations.get(activation)
-        self.kernel_initializer = initializers.get(kernel_initializer)
-        self.bias_initializer = initializers.get(bias_initializer)
+        self.kernel_initializer = initializers.getInitializer(kernel_initializer)
+        self.bias_initializer = initializers.getInitializer(bias_initializer)
 
     def BackwardPropagation(self):
         pass

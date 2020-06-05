@@ -26,12 +26,15 @@ class GradientDescentOptimizer(Optimizer):
         self.spliter = None
         self.epochs = None
         self.batch_size = None
+        self.outputLayer = None
         super(GradientDescentOptimizer, self).__init__(loss, learning_rate, **kwargs)
 
-    def build(self, x, y, epochs, batch_size):
+    def build(self, x, y, epochs, batch_size, outputLayer):
+        # Called at the beginning of training
         self.spliter = BatchSpliter(x, y, batch_size=batch_size)
         self.epochs = epochs
         self.batch_size = batch_size
+        self.outputLayer = outputLayer
 
     def _updateParameters(self):
         pass
@@ -54,6 +57,9 @@ def getOptimizer(opt, loss, learning_rate=0.0005):
     if isinstance(opt, six.string_types):
         # TODO Return initializers
         if opt == 'GD':
+            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate)
+        elif opt == 'RMSprop':
+            # TODO Implement RMSprop
             return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate)
         else:
             return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate)

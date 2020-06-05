@@ -40,6 +40,7 @@ class Sequential(Model):
     def __init__(self):
         super(Sequential, self).__init__()
         self.layers = []
+        self.outputLayer = None  # outputLayer is used for tracking loss
         self.optimizer = None
         self.isComplied = False
 
@@ -72,7 +73,7 @@ class Sequential(Model):
     def _train(self, x, y, epochs, batch_size):
         # self.loss, self.optimizer, layers, layers.layer.param
         # Note self.optimizer manages the training process
-        self.optimizer.build(x, y, epochs, batch_size)
+        self.optimizer.build(x, y, epochs, batch_size, self.outputLayer)
 
     def evaluate(self,
                  x=None,
@@ -135,6 +136,7 @@ class Sequential(Model):
             layer.inbound.append(L)
         # For sequential model, new layer will be added to the array.
         self.layers.append(layer)
+        self.outputLayer = layer
 
     def summary(self):
         print("\n" + 20 * "=")
