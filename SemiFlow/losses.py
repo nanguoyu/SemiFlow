@@ -125,16 +125,23 @@ def categorical_crossentropy(y_true, y_pred, label_smoothing=0):
 
 def getLoss(loss):
     if isinstance(loss, six.string_types):
-        if loss.lower() == 'mse':
-            return MeanSquaredError()
-        elif loss.lower() == 'mae':
-            return MeanAbsoluteError()
-        elif loss.lower() == 'binary_crossentropy':
-            return BinaryCrossentropy()
-        elif loss.lower() == 'categorical_crossentropy':
-            return CategoricalCrossentropy()
-        else:
-            raise ValueError('Could not support ', loss, ' now')
+        return searchLoss(loss_str=loss)
+    elif callable(loss):
+        return loss
     else:
         raise ValueError('Could not interpret '
                          'loss:', loss)
+
+
+def searchLoss(loss_str: str):
+    loss_str = loss_str.lower()
+    if loss_str.lower() == 'mse':
+        return MeanSquaredError()
+    elif loss_str.lower() == 'mae':
+        return MeanAbsoluteError()
+    elif loss_str.lower() == 'binary_crossentropy':
+        return BinaryCrossentropy()
+    elif loss_str.lower() == 'categorical_crossentropy':
+        return CategoricalCrossentropy()
+    else:
+        raise ValueError('Could not support ', loss_str, ' now')

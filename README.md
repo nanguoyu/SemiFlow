@@ -20,7 +20,6 @@ pip install .
 ## A Tensorflow style part.
 
 ### Features
-Progress
 - [x] computational graph
     - [x] feedforward
     - [x] numpy style operator
@@ -28,13 +27,15 @@ Progress
 - [x] Auto differentiate
 - [ ] <del>Tensor support</del>
 
+### Examples
+- Regression a line: [Regression a line](./tests/test_compute_gradients.py)
+
+
 ### Blogs
  - [[SemiFlow 动手实现深度学习框架 00] 初步的计划](https://www.nanguoyu.com/semiflow-00)
-    - Code: [A naive dense layer](./A%20naive%20example)
+    - Code: [A naive dense layer in a python file](./A%20naive%20example)
  - [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
 
-
-### Code: [A naive dense layer](./A%20naive%20example)
 
 ## A Keras style part
 > In the development, I find it is hard for me to implement a deep learning 
