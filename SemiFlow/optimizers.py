@@ -1,10 +1,10 @@
 """
-@File : optimizer.py
+@File : optimizers.py
 @Author: Dong Wang
 @Date : 2020/5/1
 """
 from .engine.core import backend
-from .losses import getLoss
+from . import losses
 from .layer.core import Layer
 from .utils import BatchSpliter
 import six
@@ -14,7 +14,7 @@ class Optimizer(object):
 
     def __init__(self, loss, learning_rate, **kwargs):
         self.learning_rate = learning_rate
-        self.loss = getLoss(loss)
+        self.loss = losses.get(loss)
         super(Optimizer, self).__init__(**kwargs)
 
     def _updateParameters(self):
@@ -65,7 +65,7 @@ class GradientDescentOptimizer(Optimizer):
                 pass
 
 
-def getOptimizer(opt, loss, learning_rate=0.0005):
+def get(opt, loss, learning_rate=0.0005):
     if isinstance(opt, six.string_types):
         # TODO Return initializers
         if opt == 'GD':

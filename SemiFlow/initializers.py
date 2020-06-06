@@ -8,7 +8,7 @@ from .engine.core import backend
 import six
 
 
-def getInitializer(init):
+def get(init):
     if isinstance(init, six.string_types):
         # TODO Return initializers
         pass

@@ -6,7 +6,7 @@
 from .engine.core import backend
 from .layer.core import Layer
 from .utils import DataShuffle, BatchSpliter, split_train_val
-from .optimizer import getOptimizer
+from . import optimizers
 
 
 class Model(object):
@@ -108,7 +108,7 @@ class Sequential(Model):
 
         # Optimizer
 
-        self.optimizer = getOptimizer(optimizer, loss=loss)
+        self.optimizer = optimizers.get(optimizer, loss=loss)
 
         # Something about optimizer and loss
         # Init params

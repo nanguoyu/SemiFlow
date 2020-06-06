@@ -16,6 +16,7 @@ class Loss(Layer):
         self.fn = fn
         self.name = name
         self._fn_kwargs = kwargs
+        self.isLoss = True  # To distinguish layer and loss. It maybe redundant.
 
     def ForwardPropagation(self, y_true):
         x, = self.inbound
@@ -123,7 +124,7 @@ def categorical_crossentropy(y_true, y_pred, label_smoothing=0):
     return -backend.sum(y_true * backend.log(y_pred), axis=-1)
 
 
-def getLoss(loss):
+def get(loss):
     if isinstance(loss, six.string_types):
         return searchLoss(loss_str=loss)
     elif callable(loss):
