@@ -4,6 +4,7 @@
 @Date : 2020/5/1
 """
 from .engine.core import backend
+from .losses import getLoss
 from .layer.core import Layer
 from .utils import BatchSpliter
 import six
@@ -13,7 +14,7 @@ class Optimizer(object):
 
     def __init__(self, loss, learning_rate, **kwargs):
         self.learning_rate = learning_rate
-        self.loss = loss
+        self.loss = getLoss(loss)
         super(Optimizer, self).__init__(**kwargs)
 
     def _updateParameters(self):
@@ -35,6 +36,9 @@ class GradientDescentOptimizer(Optimizer):
         self.epochs = epochs
         self.batch_size = batch_size
         self.outputLayer = outputLayer
+        # Bind networks and loss
+        self.loss.inbound = outputLayer
+        outputLayer.outbound = self.loss
 
     def _updateParameters(self):
         pass
@@ -44,6 +48,14 @@ class GradientDescentOptimizer(Optimizer):
         for epoch in range(self.epochs):
             for xbatch, ybatch in self.spliter.get_batch():
                 # xbatch, ybatch
+                # postorder_nodes = self._get_prerequisite(operation)
+                #
+                # for node in postorder_nodes:
+                #     if isinstance(node, Placeholder):
+                #         node.output_value = feed_dict[node]
+                #     else:
+                #         node.compute_output()
+                # return operation.output_value
                 pass
 
     def _BackwardPropagation(self):

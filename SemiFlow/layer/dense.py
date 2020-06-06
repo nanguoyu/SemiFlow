@@ -31,6 +31,7 @@ class Dense(Layer):
         self.bias_initializer = initializers.getInitializer(bias_initializer)
 
     def BackwardPropagation(self):
+        # For example : self.output_value = 0
         pass
 
     def ForwardPropagation(self):

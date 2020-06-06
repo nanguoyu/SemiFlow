@@ -37,6 +37,8 @@ class Layer(object):
         self.outbound = []
         # The params
         self.params = None
+        # The output_value
+        self.output_value = None
 
     def ForwardPropagation(self, **kwargs):
         """Forward propagation
