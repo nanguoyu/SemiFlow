@@ -5,9 +5,9 @@
 [![codecov](https://codecov.io/gh/nanguoyu/SemiFlow/branch/master/graph/badge.svg)](https://codecov.io/gh/nanguoyu/SemiFlow)
 
 
-SemiFlow is a neural network framework for machine learning.
-
-I am going to implement a neural network framework in about a month. :)
+SemiFlow is a neural network framework for machine learning. There are two parts in this repository.
+The first part is a tensorflow style deep learning framework. The second part is a Keras style
+deep learning framework.
 
 ## Install
 
@@ -17,50 +17,52 @@ cd SemiFlow
 pip install .
 ```
 
-## A naive example.
-Blogs
- - [[SemiFlow 动手实现深度学习框架 00] 初步的计划](https://www.nanguoyu.com/semiflow-00)
-    - Code: [A naive dense layer](./A%20naive%20example)
- - [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
+## A Tensorflow style part.
 
-Code: [A naive dense layer](./A%20naive%20example)
-
-## Tensorflow style design
+### Features
 Progress
 - [x] computational graph
     - [x] feedforward
     - [x] numpy style operator
     - [x] compute gradient
-- [ ] Tensor support
 - [x] Auto differentiate
+- [ ] <del>Tensor support</del>
 
-## Sequential Model 
+### Blogs
+ - [[SemiFlow 动手实现深度学习框架 00] 初步的计划](https://www.nanguoyu.com/semiflow-00)
+    - Code: [A naive dense layer](./A%20naive%20example)
+ - [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
+
+
+### Code: [A naive dense layer](./A%20naive%20example)
+
+## A Keras style part
 > In the development, I find it is hard for me to implement a deep learning 
 > framework support functional model like the Pytorch. As a result, I changed
 > the plan to develop a sequential model after finish tensorflow style design.
 
->Progress
-- [ ] Dense layer
+### Features
+
+Progress
+- [x] Dense layer
 - [ ] Model manager for training
 - [ ] Optimizer
 - [ ] Activation function
     - [x] ReLU
     - [x] Sigmoid
     - [x] tanh
-## Complex layer
-Progress
-- [ ] Convolutional layer
-- [ ] Pooling layer
-- [ ] Stochastic gradient descent
-
-
-## Big dataset support
-- [ ] Train MNIST
-
-## Advance 
+- [ ] Loss
+    - [x] mse
+    - [x] mae
+    - [x] bce
+    - [x] ce
+- [ ] Complex Layer
+    - [ ] Convolutional layer
+    - [ ] Pooling layer
+    - [ ] Stochastic gradient descent
+- [ ] Big dataset support
+    - [ ] Train MNIST
 - [ ] CUDA support
-
-## Support Docs
 - [ ] Examples and other docs
 
 ## Reference
