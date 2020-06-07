@@ -23,7 +23,6 @@ class InputLayer(Layer):
         super(InputLayer, self).__init__(**kwargs)
         self.dtype = dtype
         self.shape = shape
-        # print(self.shape)
 
     def BackwardPropagation(self, grad=None):
         """

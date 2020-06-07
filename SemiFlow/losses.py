@@ -136,13 +136,13 @@ def get(loss):
 
 def searchLoss(loss_str: str):
     loss_str = loss_str.lower()
-    if loss_str.lower() == 'mse':
+    if loss_str == 'mse':
         return MeanSquaredError()
-    elif loss_str.lower() == 'mae':
+    elif loss_str == 'mae':
         return MeanAbsoluteError()
-    elif loss_str.lower() == 'binary_crossentropy':
+    elif loss_str == 'binary_crossentropy':
         return BinaryCrossentropy()
-    elif loss_str.lower() == 'categorical_crossentropy':
+    elif loss_str == 'categorical_crossentropy':
         return CategoricalCrossentropy()
     else:
-        raise ValueError('Could not support ', loss_str, ' now')
+        raise ValueError('Could not support ', loss_str)

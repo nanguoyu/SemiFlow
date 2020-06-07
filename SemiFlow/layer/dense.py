@@ -71,7 +71,8 @@ class Dense(Layer):
         Returns:output
 
         """
-        logits = backend.multiply(self.inbound.output_value, self.params['kernel']) + self.params['bias']
+        x = self.inbound[0]
+        logits = backend.matmul(x.output_value, self.params['kernel']) + self.params['bias']
         # ToDo Implement logits
         self.output_value = self.activation.ForwardPropagation(logits)
         return self.output_value
@@ -81,7 +82,7 @@ class Dense(Layer):
         if hasattr(self, 'input_shape'):
             input_shape = self.input_shape
         else:
-            input_shape = self.inbound.output_value.shape[-1]
+            input_shape = self.inbound[0].output_value.shape[-1]
         # TODO init params by self.kernel_initializer and self.bias_initializer
         # zeros initializer should not be replaced by other initializer
         self.params = {
