@@ -26,6 +26,8 @@ def searchInit(init_str: str, **kwargs):
 
 
 def get(init, **kwargs):
+    if not init:
+        init = 'random_normal'
     if isinstance(init, six.string_types):
         return searchInit(init_str=init, **kwargs)
     elif callable(init):

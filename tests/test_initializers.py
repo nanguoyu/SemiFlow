@@ -7,6 +7,10 @@ import numpy as np
 from SemiFlow import initializers
 
 
+def test_none():
+    none = initializers.get(None)
+
+
 def test_zeros():
     zeros = initializers.get('zeros')
     parameters = zeros((2, 3))

@@ -125,6 +125,8 @@ def categorical_crossentropy(y_true, y_pred, label_smoothing=0):
 
 
 def get(loss):
+    if not loss:
+        raise ValueError('You should specify a loss function')
     if isinstance(loss, six.string_types):
         return searchLoss(loss_str=loss)
     elif callable(loss):
