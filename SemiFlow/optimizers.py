@@ -67,13 +67,14 @@ class GradientDescentOptimizer(Optimizer):
 
 def get(opt, loss, learning_rate=0.0005):
     if isinstance(opt, six.string_types):
-        # TODO Return initializers
-        if opt == 'GD':
+        opt = opt.lower()
+        if opt == 'sgd':
             return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate)
-        elif opt == 'RMSprop':
+        elif opt == 'rmsprop':
             # TODO Implement RMSprop
             return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate)
         else:
+            # TODO other Optimizer
             return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate)
     else:
         ValueError('Could not interpret '

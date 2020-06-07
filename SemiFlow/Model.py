@@ -5,7 +5,8 @@
 """
 from .engine.core import backend
 from .layer.core import Layer
-from .utils import DataShuffle, BatchSpliter, split_train_val
+from .layer.input import InputLayer
+from .utils import DataShuffle, split_train_val
 from . import optimizers
 
 
@@ -40,7 +41,9 @@ class Sequential(Model):
     def __init__(self):
         super(Sequential, self).__init__()
         self.layers = []
-        self.outputLayer = None  # outputLayer is used for tracking loss
+        self.input_layer = None
+        self.first_layer = None  # To infer dtype and inputs
+        self.last_layer = None  # outputLayer is used for tracking loss
         self.optimizer = None
         self.isComplied = False
 
@@ -73,7 +76,7 @@ class Sequential(Model):
     def _train(self, x, y, epochs, batch_size):
         # self.loss, self.optimizer, layers, layers.layer.param
         # Note self.optimizer manages the training process
-        self.optimizer.build(x, y, epochs, batch_size, self.outputLayer)
+        self.optimizer.build(x, y, epochs, batch_size, self.last_layer)
 
     def evaluate(self,
                  x=None,
@@ -101,23 +104,21 @@ class Sequential(Model):
         """
         # TODO Model.Sequential.compile.
         if not optimizer:
-            # TODO implement the default optimizer
-            optimizer = 'Default'
+            optimizer = 'sgd'
         if not loss:
             raise ValueError("loss is needed")
 
         # Optimizer
-
         self.optimizer = optimizers.get(optimizer, loss=loss)
-
-        # Something about optimizer and loss
-        # Init params
-
-        # Add loss as the last layer. But it is not a layer.
-
-        # _init_params
-        # from loss-layer apply _get_prerequisite postorder_traverse
-
+        # add Input_layer
+        if hasattr(self.first_layer, "input_shape"):
+            shape = self.first_layer.input_shape
+        else:
+            raise ValueError("You should specify the input shape")
+        self.input_layer = InputLayer(dtype=None, shape=shape)
+        self.input_layer.name = self.input_layer.__class__.__name__
+        self.first_layer.inbound.append(self.input_layer)
+        self.input_layer.outbound.append(self.first_layer)
         self.isComplied = True
 
     def add(self, layer):
@@ -130,17 +131,27 @@ class Sequential(Model):
         if not isinstance(layer, Layer):
             raise TypeError('Wrong layer type')
         layer.name = layer.__class__.__name__ + str(len(self.layers))
+        if not self.first_layer:
+            self.first_layer = layer
+        self.last_layer = layer
         if len(self.layers):
             L = self.layers[-1]
             L.outbound.append(layer)
             layer.inbound.append(L)
         # For sequential model, new layer will be added to the array.
         self.layers.append(layer)
-        self.outputLayer = layer
 
     def summary(self):
         print("\n" + 20 * "=")
-        for layer in self.layers:
+        # for layer in self.layers:
+        #     if isinstance(layer, Layer):
+        #         print(layer.name)
+        #         print(20 * "-")
+        layer = self.first_layer
+        while layer:
             print(layer.name)
             print(20 * "-")
+            if not layer.outbound:
+                break
+            layer = layer.outbound[0]
         print(20 * "=")
