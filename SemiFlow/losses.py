@@ -19,8 +19,8 @@ class Loss(Layer):
         self.isLoss = True  # To distinguish layer and loss. It maybe redundant.
 
     def ForwardPropagation(self, y_true):
-        x, = self.inbound
-        self.output_value = self.fn(y_true, x.output_value, self._fn_kwargs)
+        x = self.inbound[0]
+        self.output_value = self.fn(y_true, x.output_value, **self._fn_kwargs)
         return self.output_value
 
     def BackwardPropagation(self, **kwargs):
@@ -51,13 +51,11 @@ class MeanAbsoluteError(Loss):
 
 class BinaryCrossentropy(Loss):
     def __init__(self,
-                 from_logits=False,
                  label_smoothing=0,
                  name='binary_crossentropy'):
         super(BinaryCrossentropy, self).__init__(
             fn=binary_crossentropy,
             name=name,
-            from_logits=from_logits,
             label_smoothing=label_smoothing)
 
     def BackwardPropagation(self, **kwargs):
@@ -90,13 +88,18 @@ def mean_absolute_error(y_true, y_pred):
     return backend.mean(backend.abs(y_pred - y_true), axis=-1)
 
 
-def binary_crossentropy(y_true, y_pred):
+def binary_crossentropy(y_true, y_pred, label_smoothing=0):
     assert y_true.shape[0] == y_pred.shape[0], "wrong shape"
-    # TODO correct binary_crossentropy
-    loss = 0
-    for i in range(y_true.shape[0]):
-        loss += - (y_true[i] * backend.log(y_pred[i]) + (1 - y_true[i]) * backend.log(1 - y_pred[i]))
-    return loss / y_true.shape[0]
+    if label_smoothing != 0:
+        # TODO smooth label
+        # https://towardsdatascience.com/label-smoothing-making-model-robust-to-incorrect-labels-2fae037ffbd0
+        # y_true = y_true*(1-label_smoothing) + label_smoothing/num_classes
+        pass
+    # Resize y_true to (max min), avoiding zero
+    epsilon = backend.finfo(backend.float32).eps
+    y_pred[y_pred > 1 - epsilon] = 1 - epsilon
+    y_pred[y_pred < epsilon] = epsilon
+    return -backend.sum(y_true * backend.log(y_pred) + (1 - y_true) * backend.log(1 - y_pred), axis=-1)
 
 
 def categorical_crossentropy(y_true, y_pred, label_smoothing=0):
