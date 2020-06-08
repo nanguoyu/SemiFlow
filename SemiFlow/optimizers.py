@@ -27,23 +27,25 @@ class GradientDescentOptimizer(Optimizer):
         self.spliter = None
         self.epochs = None
         self.batch_size = None
-        self.outputLayer = None
+        self.last_layer = None
+        self.first_layer = None
         super(GradientDescentOptimizer, self).__init__(loss, learning_rate, **kwargs)
 
-    def build(self, x, y, epochs, batch_size, outputLayer):
+    def build(self, x, y, epochs, batch_size, first_layer, last_layer):
         # Called at the beginning of training
         self.spliter = BatchSpliter(x, y, batch_size=batch_size)
         self.epochs = epochs
         self.batch_size = batch_size
-        self.outputLayer = outputLayer
+        self.first_layer = first_layer
+        self.last_layer = last_layer
         # Bind networks and loss
-        self.loss.inbound = outputLayer
-        outputLayer.outbound = self.loss
+        self.loss.inbound = last_layer
+        last_layer.outbound = self.loss
 
     def _updateParameters(self):
         pass
 
-    def _ForwardPropagation(self, data, params, grads, batch, **kwargs):
+    def _ForwardPropagation(self):
         # TODO optimizer.GradientDescentOptimizer.ForwardPropagation
         for epoch in range(self.epochs):
             for xbatch, ybatch in self.spliter.get_batch():

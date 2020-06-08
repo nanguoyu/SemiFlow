@@ -86,5 +86,5 @@ class Dense(Layer):
         # TODO init params by self.kernel_initializer and self.bias_initializer
         # zeros initializer should not be replaced by other initializer
         self.params = {
-            'kernel': backend.zeros([output_shape, input_shape]),
+            'kernel': backend.zeros([input_shape, output_shape]),
             'bias': backend.zeros([output_shape, 1])}

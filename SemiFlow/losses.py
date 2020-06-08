@@ -80,12 +80,12 @@ class CategoricalCrossentropy(Loss):
 
 def mean_squared_error(y_true, y_pred):
     assert y_true.shape[0] == y_pred.shape[0], "wrong shape"
-    return backend.mean(backend.square(y_pred - y_true), axis=-1)
+    return backend.mean(backend.square(y_pred - y_true), axis=0)
 
 
 def mean_absolute_error(y_true, y_pred):
     assert y_true.shape[0] == y_pred.shape[0], "wrong shape"
-    return backend.mean(backend.abs(y_pred - y_true), axis=-1)
+    return backend.mean(backend.abs(y_pred - y_true), axis=0)
 
 
 def binary_crossentropy(y_true, y_pred, label_smoothing=0):
@@ -99,7 +99,9 @@ def binary_crossentropy(y_true, y_pred, label_smoothing=0):
     epsilon = backend.finfo(backend.float32).eps
     y_pred[y_pred > 1 - epsilon] = 1 - epsilon
     y_pred[y_pred < epsilon] = epsilon
-    return -backend.sum(y_true * backend.log(y_pred) + (1 - y_true) * backend.log(1 - y_pred), axis=-1)
+    return backend.sum(
+        -backend.sum(y_true * backend.log(y_pred) + (1 - y_true) * backend.log(1 - y_pred), axis=-1),
+        axis=0)
 
 
 def categorical_crossentropy(y_true, y_pred, label_smoothing=0):
@@ -124,7 +126,7 @@ def categorical_crossentropy(y_true, y_pred, label_smoothing=0):
     epsilon = backend.finfo(backend.float32).eps
     y_pred[y_pred > 1 - epsilon] = 1 - epsilon
     y_pred[y_pred < epsilon] = epsilon
-    return -backend.sum(y_true * backend.log(y_pred), axis=-1)
+    return backend.sum(-backend.sum(y_true * backend.log(y_pred), axis=-1), axis=0)
 
 
 def get(loss):

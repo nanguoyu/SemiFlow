@@ -42,6 +42,11 @@ class InputLayer(Layer):
         Returns:output_value
 
         """
-        # TODO check feed.dtype
-        self.output_value = feed
+        # TODO check feed.shape
+        if feed.shape[-1] == self.shape:
+            self.output_value = feed
+        else:
+            raise ValueError(
+                " expect shape: ", self.shape,
+                " but get ", feed.shape[-1])
         return self.output_value

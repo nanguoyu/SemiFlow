@@ -74,22 +74,8 @@ class Sequential(Model):
         self._train(x_train, y_train, epochs, batch_size)
 
     def _train(self, x, y, epochs, batch_size):
-        # self.loss, self.optimizer, layers, layers.layer.param
         # Note self.optimizer manages the training process
-        self.optimizer.build(x, y, epochs, batch_size, self.last_layer)
-
-    def evaluate(self,
-                 x=None,
-                 y=None,
-                 batch_size=None,
-                 verbose=1,
-                 **kwargs):
-        # TODO Model.Sequential.evaluate
-        pass
-
-    def predict(self, **kwargs):
-        # TODO Model.Sequential.predict
-        pass
+        self.optimizer.build(x, y, epochs, batch_size, self.first_layer, self.last_layer)
 
     def compile(self,
                 loss=None,
@@ -143,10 +129,6 @@ class Sequential(Model):
 
     def summary(self):
         print("\n" + 20 * "=")
-        # for layer in self.layers:
-        #     if isinstance(layer, Layer):
-        #         print(layer.name)
-        #         print(20 * "-")
         layer = self.first_layer
         while layer:
             print(layer.name)
@@ -155,3 +137,16 @@ class Sequential(Model):
                 break
             layer = layer.outbound[0]
         print(20 * "=")
+
+    def evaluate(self,
+                 x=None,
+                 y=None,
+                 batch_size=None,
+                 verbose=1,
+                 **kwargs):
+        # TODO Model.Sequential.evaluate
+        pass
+
+    def predict(self, **kwargs):
+        # TODO Model.Sequential.predict
+        pass
