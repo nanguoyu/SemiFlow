@@ -77,16 +77,15 @@ class Dense(Layer):
         self.output_value = self.activation.ForwardPropagation(logits)
         return self.output_value
 
-    def _init_params(self):
+    def InitParams(self):
         output_shape = self.units
         if hasattr(self, 'input_shape'):
             input_shape = self.input_shape
+            self.shape = (input_shape, output_shape)
         else:
-            input_shape = self.inbound[0].output_value.shape[-1]
-        # TODO init params by self.kernel_initializer and self.bias_initializer
-        # zeros initializer should not be replaced by other initializer
-        # kernel = backend.zeros([input_shape, output_shape])
-        # bias = backend.zeros([output_shape, 1])
+            input_shape = self.inbound[0].shape[-1]
+            self.shape = (input_shape, output_shape)
+        # print(self.name+'.InitParams', self.shape)
         kernel = self.kernel_initializer(shape=[input_shape, output_shape])
         bias = self.kernel_initializer(shape=[output_shape, 1])
         self.params = {

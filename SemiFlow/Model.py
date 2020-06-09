@@ -88,7 +88,6 @@ class Sequential(Model):
             optimizer: learning method
 
         """
-        # TODO Model.Sequential.compile.
         if not optimizer:
             optimizer = 'sgd'
         if not loss:
@@ -101,10 +100,17 @@ class Sequential(Model):
             shape = self.first_layer.input_shape
         else:
             raise ValueError("You should specify the input shape")
-        self.input_layer = InputLayer(dtype=None, shape=shape)
+        self.input_layer = InputLayer(dtype=None, shape=(shape,))
         self.input_layer.name = self.input_layer.__class__.__name__
         self.first_layer.inbound.append(self.input_layer)
         self.input_layer.outbound.append(self.first_layer)
+        # Init_parameters
+        layer = self.first_layer
+        while layer:
+            layer.InitParams()
+            if not layer.outbound:
+                break
+            layer = layer.outbound[0]
         self.isComplied = True
 
     def add(self, layer):
@@ -119,11 +125,11 @@ class Sequential(Model):
         layer.name = layer.__class__.__name__ + str(len(self.layers))
         if not self.first_layer:
             self.first_layer = layer
-        self.last_layer = layer
-        if len(self.layers):
-            L = self.layers[-1]
-            L.outbound.append(layer)
-            layer.inbound.append(L)
+            self.last_layer = layer
+        else:
+            self.last_layer.outbound.append(layer)
+            layer.inbound.append(self.last_layer)
+            self.last_layer = layer
         # For sequential model, new layer will be added to the array.
         self.layers.append(layer)
 

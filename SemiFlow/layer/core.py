@@ -27,7 +27,13 @@ class Layer(object):
                 raise TypeError('Keyword argument not understood:', kwarg)
 
         if 'input_shape' in kwargs:
-            self.input_shape = tuple(kwargs['input_shape'])
+            if isinstance(kwargs['input_shape'], tuple):
+                if len(kwargs['input_shape']) == 1:
+                    self.input_shape = kwargs['input_shape'][0]
+                else:
+                    self.input_shape = tuple(kwargs['input_shape'])
+            else:
+                self.input_shape = kwargs['input_shape']
         if 'name' in kwargs:
             self.name = kwargs.get('name')
 
@@ -35,6 +41,8 @@ class Layer(object):
         self.inbound = []
         # The output layer of this layer
         self.outbound = []
+        # The shape of this layer
+        self.shape = None
         # The params
         self.params = None
         # The output_value
@@ -48,4 +56,8 @@ class Layer(object):
     def BackwardPropagation(self, **kwargs):
         """Backward propagation
         """
+        raise NotImplementedError
+
+    def InitParams(self):
+        """Initialize parameters"""
         raise NotImplementedError

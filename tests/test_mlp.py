@@ -18,7 +18,7 @@ epochs = 20
 def test_mlp():
     model = Sequential()
     model.add(Dense(units=512, activation='relu', input_shape=(784,)))
-    model.add(Dense(units=512, activation='relu'))
+    model.add(Dense(units=256, activation='relu'))
     model.add(Dense(num_classes, activation='softmax'))
 
     model.summary()
