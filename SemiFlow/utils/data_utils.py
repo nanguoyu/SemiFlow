@@ -3,34 +3,62 @@
 @Author: Dong Wang
 @Date : 2020/5/2
 """
+from ..engine import backend
+import math
+import warnings
 
 
-def DataShuffle(x, y):
+def DataShuffle(x, y, seed: int = None):
     """Shuffle data"""
-    # TODO utils.data_utils.DataShuffle
-    return x, y
+    assert len(x) == len(y), 'X does not match Y'
+    if not seed:
+        seed = 1
+    backend.random.seed(seed)
+    I = backend.random.permutation(len(x))
+    return x[I], y[I]
 
 
 class BatchSpliter(object):
-    def __init__(self, x, y, batch_size):
-        self.x = x
-        self.y = y
+    def __init__(self, x, y, batch_size, shuffle=True):
+        if shuffle:
+            self.x, self.y = DataShuffle(x, y)
+        else:
+            self.x, self.y = x, y
+        self.num = len(x)
         self.batch_size = batch_size
+        self._split()
 
     def get_batch(self):
-        # TODO A dataGenerator : get a batch of size
         n = 0
         while n < self.batch_size:
-            yield None, None
+            yield self.x[self.index[n][0]:self.index[n][1]], self.y[self.index[n][0]:self.index[n][1]]
             n = n + 1
-        return None, None
+
+    def _split(self):
+        num_each_batch = int(self.num / self.batch_size)
+        if num_each_batch <= 0:
+            warnings.warn('batch_size should be <= the num of data', UserWarning)
+            self.batch_size = 1
+            num_each_batch = self.num
+
+        index = []
+        last = 0
+        for i in range(self.batch_size):
+            index.append([last, last + num_each_batch])
+            last = last + num_each_batch
+        if index[-1][-1] <= self.num - 1:
+            index[-1][-1] = self.num
+        self.index = index
 
 
 def split_train_val(x, y, validation_split):
-    # TODO validation_split
-    x_train = x
-    y_train = y
+    assert len(x) == len(y)
+    assert 0 < validation_split < 1
+    num = len(x)
+    num_train = int(num * (1 - validation_split))
+    x_train = x[0:num_train]
+    y_train = y[0:num_train]
 
-    x_val = x
-    y_val = y
+    x_val = x[num_train:-1]
+    y_val = y[num_train:-1]
     return x_train, y_train, x_val, y_val

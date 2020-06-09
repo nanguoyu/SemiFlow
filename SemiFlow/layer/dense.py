@@ -29,6 +29,7 @@ class Dense(Layer):
         self.activation = activations.get(activation)
         self.kernel_initializer = initializers.get(kernel_initializer)
         self.bias_initializer = initializers.get(bias_initializer)
+        self.isInitialized = False
 
     def BackwardPropagation(self, grad=None):
         """
@@ -78,6 +79,7 @@ class Dense(Layer):
         return self.output_value
 
     def InitParams(self):
+        self.isInitialized = True
         output_shape = self.units
         if hasattr(self, 'input_shape'):
             input_shape = self.input_shape
@@ -91,3 +93,6 @@ class Dense(Layer):
         self.params = {
             'kernel': kernel,
             'bias': bias}
+
+    def UpdateParams(self):
+        pass

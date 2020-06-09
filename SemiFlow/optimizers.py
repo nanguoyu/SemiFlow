@@ -47,18 +47,17 @@ class GradientDescentOptimizer(Optimizer):
 
     def _ForwardPropagation(self):
         # TODO optimizer.GradientDescentOptimizer.ForwardPropagation
-        for epoch in range(self.epochs):
-            for xbatch, ybatch in self.spliter.get_batch():
-                # xbatch, ybatch
-                # postorder_nodes = self._get_prerequisite(operation)
-                #
-                # for node in postorder_nodes:
-                #     if isinstance(node, Placeholder):
-                #         node.output_value = feed_dict[node]
-                #     else:
-                #         node.compute_output()
-                # return operation.output_value
-                pass
+        for xbatch, ybatch in self.spliter.get_batch():
+            # xbatch, ybatch
+            # postorder_nodes = self._get_prerequisite(operation)
+            #
+            # for node in postorder_nodes:
+            #     if isinstance(node, Placeholder):
+            #         node.output_value = feed_dict[node]
+            #     else:
+            #         node.compute_output()
+            # return operation.output_value
+            pass
 
     def _BackwardPropagation(self):
         for epoch in range(self.epochs):
