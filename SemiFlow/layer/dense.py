@@ -66,7 +66,7 @@ class Dense(Layer):
 
     def ForwardPropagation(self):
         """
-        logits = w * x+b
+        logits = x * w+b
         output = activation(logits)
         Returns:output
 
@@ -85,6 +85,10 @@ class Dense(Layer):
             input_shape = self.inbound[0].output_value.shape[-1]
         # TODO init params by self.kernel_initializer and self.bias_initializer
         # zeros initializer should not be replaced by other initializer
+        # kernel = backend.zeros([input_shape, output_shape])
+        # bias = backend.zeros([output_shape, 1])
+        kernel = self.kernel_initializer(shape=[input_shape, output_shape])
+        bias = self.kernel_initializer(shape=[output_shape, 1])
         self.params = {
-            'kernel': backend.zeros([input_shape, output_shape]),
-            'bias': backend.zeros([output_shape, 1])}
+            'kernel': kernel,
+            'bias': bias}

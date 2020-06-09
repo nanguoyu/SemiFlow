@@ -86,7 +86,7 @@ class Relu(Activation):
         return relu(inputs)
 
     def BackwardPropagation(self, grads):
-        return grads > 0
+        return grads > 0.0
 
 
 class Tanh(Activation):
@@ -124,7 +124,7 @@ def sigmoid(x):
     # Returns
         The sigmoid activation: 1/(1+exp(-x))
     """
-    return 1 / (1 + backend.exp(-x))
+    return 1. / (1. + backend.exp(-x))
 
 
 def relu(x):
@@ -137,7 +137,7 @@ def relu(x):
         The ReLu activation: max(x,0)
     """
 
-    return backend.max(x, 0)
+    return backend.maximum(x, 0.0)
 
 
 def tanh(x):
