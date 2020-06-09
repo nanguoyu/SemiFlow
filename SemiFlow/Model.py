@@ -59,23 +59,26 @@ class Sequential(Model):
             shuffle=True,
             **kwargs):
         assert self.isComplied, "Model should be compiled before fit"
-
-        x_raw = x
-        y_raw = y
+        assert x is not None and y is not None, "X_train and Y_train are needed"
 
         if shuffle:
             x, y = DataShuffle(x, y)
 
-        if validation_split != 0:
-            x_train, y_train, x_val, y_val = split_train_val(x, y, validation_split)
-        else:
+        if validation_data is not None:
             x_train, y_train = x, y
+            x_val, y_val = validation_data[0], validation_data[1]
+        else:
+            if validation_split != 0:
+                x_train, y_train, x_val, y_val = split_train_val(x, y, validation_split)
+            else:
+                x_train, y_train = x, y
 
         self._train(x_train, y_train, epochs, batch_size)
 
     def _train(self, x, y, epochs, batch_size):
         # Note self.optimizer manages the training process
         self.optimizer.build(x, y, epochs, batch_size, self.first_layer, self.last_layer)
+        self.optimizer.ForwardPropagation()
 
     def compile(self,
                 loss=None,

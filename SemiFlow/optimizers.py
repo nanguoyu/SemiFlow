@@ -20,6 +20,12 @@ class Optimizer(object):
     def _updateParameters(self):
         raise NotImplementedError
 
+    def ForwardPropagation(self):
+        raise NotImplementedError
+
+    def BackwardPropagation(self):
+        raise NotImplementedError
+
 
 class GradientDescentOptimizer(Optimizer):
 
@@ -31,9 +37,12 @@ class GradientDescentOptimizer(Optimizer):
         self.first_layer = None
         super(GradientDescentOptimizer, self).__init__(loss, learning_rate, **kwargs)
 
-    def build(self, x, y, epochs, batch_size, first_layer, last_layer):
+    def build(self, x_train, y_train, epochs, batch_size, first_layer, last_layer):
         # Called at the beginning of training
-        self.spliter = BatchSpliter(x, y, batch_size=batch_size)
+        # Todo support validation
+        # self.x_val = x_val
+        # self.y_val = y_val
+        self.spliter = BatchSpliter(x_train, y_train, batch_size=batch_size)
         self.epochs = epochs
         self.batch_size = batch_size
         self.first_layer = first_layer
@@ -41,13 +50,17 @@ class GradientDescentOptimizer(Optimizer):
         # Bind networks and loss
         self.loss.inbound = last_layer
         last_layer.outbound = self.loss
+        # Check data shape
+        assert x_train.shape[-1] == self.first_layer.shape[0], "wrong input size"
+        assert y_train.shape[-1] == self.last_layer.shape[-1], "wrong output size"
 
     def _updateParameters(self):
         pass
 
-    def _ForwardPropagation(self):
+    def ForwardPropagation(self):
         # TODO optimizer.GradientDescentOptimizer.ForwardPropagation
         for xbatch, ybatch in self.spliter.get_batch():
+            print(xbatch.shape, ybatch.shape)
             # xbatch, ybatch
             # postorder_nodes = self._get_prerequisite(operation)
             #
@@ -59,11 +72,10 @@ class GradientDescentOptimizer(Optimizer):
             # return operation.output_value
             pass
 
-    def _BackwardPropagation(self):
-        for epoch in range(self.epochs):
-            for xbatch, ybatch in self.spliter.get_batch():
-                # xbatch, ybatch
-                pass
+    def BackwardPropagation(self):
+        for xbatch, ybatch in self.spliter.get_batch():
+            # xbatch, ybatch
+            pass
 
 
 def get(opt, loss, learning_rate=0.0005):

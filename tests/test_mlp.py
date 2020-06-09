@@ -6,9 +6,13 @@
 
 from SemiFlow.layer import Dense
 from SemiFlow.Model import Sequential
+from SemiFlow.utils.dataset import mnist
 
-x_train, y_train = None, None
-x_test, y_test = None, None
+train_set, valid_set, test_set = mnist(one_hot=True)
+
+x_train, y_train = train_set[0], train_set[1]
+x_test, y_test = test_set[0], test_set[1]
+x_val, y_val = valid_set[0], valid_set[1]
 
 num_classes = 10
 batch_size = 128
