@@ -103,7 +103,7 @@ class Sequential(Model):
             shape = self.first_layer.input_shape
         else:
             raise ValueError("You should specify the input shape")
-        self.input_layer = InputLayer(dtype=None, shape=(shape,))
+        self.input_layer = InputLayer(dtype=None, shape=shape)
         self.input_layer.name = self.input_layer.__class__.__name__
         self.first_layer.inbound.append(self.input_layer)
         self.input_layer.outbound.append(self.first_layer)

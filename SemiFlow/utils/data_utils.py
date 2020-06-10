@@ -26,28 +26,31 @@ class BatchSpliter(object):
             self.x, self.y = x, y
         self.num = len(x)
         self.batch_size = batch_size
+        self.num_batch = int(self.num / self.batch_size)
+
         self._split()
 
     def get_batch(self):
         n = 0
-        while n < self.batch_size:
+        while n < self.num_batch:
             yield self.x[self.index[n][0]:self.index[n][1]], self.y[self.index[n][0]:self.index[n][1]]
             n = n + 1
 
     def _split(self):
-        num_each_batch = int(self.num / self.batch_size)
-        if num_each_batch <= 0:
+        self.num_batch = int(self.num / self.batch_size)
+        if self.num_batch <= 0:
             warnings.warn('batch_size should be <= the num of data', UserWarning)
             self.batch_size = 1
-            num_each_batch = self.num
+            num_batch = self.num
 
         index = []
         last = 0
-        for i in range(self.batch_size):
-            index.append([last, last + num_each_batch])
-            last = last + num_each_batch
+        for i in range(self.num_batch):
+            index.append([last, last + self.batch_size])
+            last = last + self.batch_size
         if index[-1][-1] <= self.num - 1:
-            index[-1][-1] = self.num
+            index.append([index[-1][-1], self.num])
+            self.num_batch += 1
         self.index = index
 
 

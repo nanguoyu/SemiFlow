@@ -5,7 +5,10 @@
 """
 from .engine.core import backend
 from . import losses
+from .losses import Loss
 from .layer.core import Layer
+from .layer.input import InputLayer
+from .layer.core import get_prerequisite
 from .utils import BatchSpliter
 import six
 
@@ -48,8 +51,8 @@ class GradientDescentOptimizer(Optimizer):
         self.first_layer = first_layer
         self.last_layer = last_layer
         # Bind networks and loss
-        self.loss.inbound = last_layer
-        last_layer.outbound = self.loss
+        self.loss.inbound.append(self.last_layer)
+        last_layer.outbound.append(self.loss)
         # Check data shape
         assert x_train.shape[-1] == self.first_layer.shape[0], "wrong input size"
         assert y_train.shape[-1] == self.last_layer.shape[-1], "wrong output size"
@@ -59,18 +62,23 @@ class GradientDescentOptimizer(Optimizer):
 
     def ForwardPropagation(self):
         # TODO optimizer.GradientDescentOptimizer.ForwardPropagation
+        postorder_nodes = get_prerequisite(last_layer=self.loss)
+        i = 0
         for xbatch, ybatch in self.spliter.get_batch():
-            print(xbatch.shape, ybatch.shape)
+            # print("[", i, "]", xbatch.shape, ybatch.shape)
             # xbatch, ybatch
-            # postorder_nodes = self._get_prerequisite(operation)
-            #
-            # for node in postorder_nodes:
-            #     if isinstance(node, Placeholder):
-            #         node.output_value = feed_dict[node]
-            #     else:
-            #         node.compute_output()
-            # return operation.output_value
-            pass
+
+            for node in postorder_nodes:
+                # print(node.name)
+                if isinstance(node, InputLayer):
+                    node.ForwardPropagation(feed=xbatch)
+                elif isinstance(node, Loss):
+                    node.ForwardPropagation(y_true=ybatch)
+                elif isinstance(node, Layer):
+                    node.ForwardPropagation()
+            # print(self.last_layer.output_value.shape)
+            # return self.last_layer.output_value
+            i += 1
 
     def BackwardPropagation(self):
         for xbatch, ybatch in self.spliter.get_batch():

@@ -11,7 +11,7 @@ from .Model import Layer
 
 class Loss(Layer):
 
-    def __init__(self, fn, name=None, **kwargs):
+    def __init__(self, fn, name='Loss', **kwargs):
         super(Loss, self).__init__()
         self.fn = fn
         self.name = name

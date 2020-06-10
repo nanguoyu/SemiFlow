@@ -16,15 +16,19 @@ def test_DataShuffle():
 
 
 def test_BatchSpliter():
-    x = np.array(range(3))
+    x = np.array(range(13))
     y = x ** 2
-    BS = BatchSpliter(x=x, y=y, batch_size=2)
-    assert BS.index[0] == [0, 1] and BS.index[1] == [1, 3]
+    BS = BatchSpliter(x=x, y=y, batch_size=5)
     print('\n')
     print(BS.x)
     print(BS.y)
-    for m, n in BS.get_batch():
-        print(m, n)
+    print(BS.index)
+    # assert BS.index[0] == [0, 5] and BS.index[1] == [5, 10]
+    # print('\n')
+    # print(BS.x)
+    # print(BS.y)
+    # for m, n in BS.get_batch():
+    #     print(m, n)
 
 
 def test_split_train_val():

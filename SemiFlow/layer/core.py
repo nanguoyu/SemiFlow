@@ -61,3 +61,24 @@ class Layer(object):
     def InitParams(self):
         """Initialize parameters"""
         raise NotImplementedError
+
+
+def get_prerequisite(last_layer: Layer):
+    """
+    Get its prerequisite layers in a model
+    Args:
+        last_layer: The last layer in a model
+
+    Returns: its prerequisite layers including layers and inputLayer
+
+    """
+    postorder_layers = []
+
+    def postorder_traverse(last_layer):
+        if isinstance(last_layer, Layer):
+            for input_layer in last_layer.inbound:
+                postorder_traverse(input_layer)
+        postorder_layers.append(last_layer)
+
+    postorder_traverse(last_layer)
+    return postorder_layers

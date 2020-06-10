@@ -5,7 +5,7 @@
 """
 import pytest
 import numpy as np
-from SemiFlow.activations import Sigmoid, Relu, Tanh, Softplus
+from SemiFlow.activations import Sigmoid, Relu, Tanh, Softplus, Softmax
 
 
 def test_sigmoid():
@@ -67,3 +67,13 @@ def test_Softplus():
                                        3) == 0.881 and round(N[1][0],
                                                              3) == 0.999 and round(N[1][1],
                                                                                    3) == 0.450
+
+
+def test_Softmax():
+    x = np.array([[1., 2., 3.],
+                  [1., 4., 9.]])
+    SOFTMAX = Softmax()
+    M = SOFTMAX.ForwardPropagation(x)
+    N = SOFTMAX.BackwardPropagation(np.array([[1., -2.], [-7., 0.2]]))
+    print('\n', M)
+    print('\n', N)

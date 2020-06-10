@@ -30,7 +30,7 @@ def searchActivation(activation_str: str):
     elif activation_str == 'tanh':
         return Tanh()
     elif activation_str == 'softmax':
-        pass
+        return Softmax()
     elif activation_str == 'linear':
         return Linear()
     elif activation_str == 'softplus':
@@ -40,6 +40,7 @@ def searchActivation(activation_str: str):
                          activation_str)
 
 
+# Todo All activation.BackwardPropagation should be reviewed
 class Activation(Layer):
     def __init__(self, **kwargs):
         """Activation abstract class Constructor"""
@@ -111,6 +112,17 @@ class Softplus(Activation):
         return 1 / (1 + backend.exp(grads))
 
 
+class Softmax(Activation):
+    def __init__(self, **kwargs):
+        super(Activation, self).__init__(**kwargs)
+
+    def ForwardPropagation(self, inputs):
+        return softmax(inputs)
+
+    def BackwardPropagation(self, grad):
+        return grad - 1
+
+
 # TODO implement Gelu activation class
 
 # activation function
@@ -176,3 +188,24 @@ def gelu(x):
         An approximation of GELU activation: 0.5 * x * (1 + tanh( sqrt(2/pi) * (x+ 0.044715*x^3)  ))
     """
     return 0.5 * x * (1 + tanh(backend.sqrt(2 / backend.pi) * (x + 0.044715 * x ^ 3)))
+
+
+def softmax(x, axis=-1):
+    """softmax activation function
+    Args:
+        x:logits
+        axis:
+    softmax = exp(logits) / sum(exp(logits), axis)
+    Returns:
+
+    """
+    ndim = backend.ndim(x)
+    if ndim == 2:
+        return backend.exp(x) / backend.sum(backend.exp(x), axis=-1, keepdims=True)
+    elif ndim > 2:
+        e = backend.exp(x - backend.max(x, axis=axis, keepdims=True))
+        s = backend.sum(e, axis=axis, keepdims=True)
+        return e / s
+    else:
+        raise ValueError('Cannot apply softmax to a tensor that is 1D. '
+                         'Received input: %s' % x)
