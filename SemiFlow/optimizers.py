@@ -5,7 +5,6 @@
 """
 from .engine.core import backend
 from . import losses
-from .losses import Loss
 from .layer.core import Layer
 from .layer.input import InputLayer
 from .layer.core import get_prerequisite
@@ -72,7 +71,7 @@ class GradientDescentOptimizer(Optimizer):
                 # print(node.name)
                 if isinstance(node, InputLayer):
                     node.ForwardPropagation(feed=xbatch)
-                elif isinstance(node, Loss):
+                elif isinstance(node, losses.Loss):
                     node.ForwardPropagation(y_true=ybatch)
                 elif isinstance(node, Layer):
                     node.ForwardPropagation()
