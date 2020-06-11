@@ -337,7 +337,6 @@ class Square(Operation):
         """Compute and return the value of Square operation
         """
         input_value = self.input_nodes[0].output_value
-
         if grad is None:
             grad = backend.ones_like(self.output_value)
         return grad * backend.multiply(2.0, input_value)

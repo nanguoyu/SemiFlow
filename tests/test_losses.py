@@ -71,3 +71,19 @@ def test_binary_crossentropy():
     loss_value = Loss.ForwardPropagation(y_true=y_true)
     # print(loss_value)
     assert 0.71 == round(loss_value, 2)
+
+
+def test_softmax_categorical_crossentropy():
+    fn = 'softmax_categorical_crossentropy'
+    y_pred = np.array([[0.9, 4.2, 0.3], [0.9, 4.2, 0.3]])
+    y_true = np.array([[0., 1., 0.], [0., 1., 0.]])
+    Loss = losses.get(fn)
+    assert isinstance(Loss, losses.SoftmaxCategoricalCrossentropy)
+    Input = InputLayer(shape=3)
+    Input.ForwardPropagation(feed=y_pred)
+    Input.outbound.append(Loss)
+    Loss.inbound.append(Input)
+    loss_value = Loss.ForwardPropagation(y_true=y_true)
+    Loss.BackwardPropagation()
+    print(loss_value)
+    assert round(loss_value, 3) == round(0.11110606741309674, 3)

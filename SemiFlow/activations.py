@@ -45,6 +45,7 @@ class Activation(Layer):
     def __init__(self, **kwargs):
         """Activation abstract class Constructor"""
         super(Activation, self).__init__(**kwargs)
+        self.input_value = None
 
     def ForwardPropagation(self, **kwargs):
         raise NotImplementedError
@@ -61,11 +62,15 @@ class Linear(Activation):
         super(Linear, self).__init__(**kwargs)
 
     def ForwardPropagation(self, inputs):
-        return inputs
+        self.output_value = inputs
+        self.input_value = inputs
+        return self.output_value
 
-    def BackwardPropagation(self, grads):
+    def BackwardPropagation(self, grads=None):
         # TODO review the derivative of Linear activation function
-        return 1
+        if grads is None:
+            grads = backend.ones_like(self.output_value)
+        return grads
 
 
 class Sigmoid(Activation):
@@ -73,10 +78,15 @@ class Sigmoid(Activation):
         super(Sigmoid, self).__init__(**kwargs)
 
     def ForwardPropagation(self, inputs):
-        return sigmoid(inputs)
+        self.output_value = sigmoid(inputs)
+        self.input_value = inputs
+        return self.output_value
 
-    def BackwardPropagation(self, grads):
-        return sigmoid(grads) * (1.0 - sigmoid(grads))
+    def BackwardPropagation(self, grads=None):
+        if grads is None:
+            grads = backend.ones_like(self.output_value)
+        print(grads.shape)
+        return grads * self.output_value * (1 - self.output_value)
 
 
 class Relu(Activation):
@@ -84,10 +94,14 @@ class Relu(Activation):
         super(Relu, self).__init__(**kwargs)
 
     def ForwardPropagation(self, inputs):
-        return relu(inputs)
+        self.output_value = relu(inputs)
+        self.input_value = inputs
+        return self.output_value
 
-    def BackwardPropagation(self, grads):
-        return grads > 0.0
+    def BackwardPropagation(self, grads=None):
+        if grads is None:
+            grads = backend.ones_like(self.output_value)
+        return grads * (self.output_value > 0)
 
 
 class Tanh(Activation):
@@ -95,10 +109,14 @@ class Tanh(Activation):
         super(Tanh, self).__init__(**kwargs)
 
     def ForwardPropagation(self, inputs):
-        return tanh(inputs)
+        self.output_value = tanh(inputs)
+        self.input_value = inputs
+        return self.output_value
 
-    def BackwardPropagation(self, grads):
-        return 1 - tanh(grads) ** 2
+    def BackwardPropagation(self, grads=None):
+        if grads is None:
+            grads = backend.ones_like(self.output_value)
+        return grads * (1 - self.output_value ** 2)
 
 
 class Softplus(Activation):
@@ -106,10 +124,14 @@ class Softplus(Activation):
         super(Softplus, self).__init__(**kwargs)
 
     def ForwardPropagation(self, inputs):
-        return softplus(inputs)
+        self.output_value = softplus(inputs)
+        self.input_value = inputs
+        return self.output_value
 
-    def BackwardPropagation(self, grads):
-        return 1 / (1 + backend.exp(grads))
+    def BackwardPropagation(self, grads=None):
+        if grads is None:
+            grads = backend.ones_like(self.output_value)
+        return grads * 1 / (1 + backend.exp(self.input_value))
 
 
 class Softmax(Activation):
@@ -117,10 +139,33 @@ class Softmax(Activation):
         super(Activation, self).__init__(**kwargs)
 
     def ForwardPropagation(self, inputs):
-        return softmax(inputs)
+        self.input_value = inputs
+        self.output_value = softmax(inputs)
+        return self.output_value
 
-    def BackwardPropagation(self, grad):
-        return grad - 1
+    def BackwardPropagation(self, grads=None):
+        """
+        z = Logits = self.input_value
+        f = softmax(Logits) = self.output_value
+        df_dz
+        Args:
+            grads:
+
+        Returns:
+
+        """
+        if grads is None:
+            grads = backend.ones_like(self.output_value)
+        df_dz = backend.zeros([len(self.input_value), len(self.output_value)])
+        for j in range(len(self.input_value)):
+            for i in range(len(self.output_value)):
+                if i == j:
+                    df_dz[j, i] = self.output_value[j, i] * (1 - self.output_value[j, i])
+                else:
+                    df_dz[j, i] = -self.output_value[j, i] * self.output_value[j, j]
+
+        # Todo: check df_dz
+        return grads * df_dz
 
 
 # TODO implement Gelu activation class

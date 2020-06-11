@@ -60,4 +60,5 @@ class ReduceSum(Operation):
         output_shape[self.axis] = 1.0
         tile_scaling = backend.shape(input_value) // output_shape
         grad = backend.reshape(grad, output_shape)
+        # print(backend.shape(input_value), output_shape)
         return backend.tile(grad, tile_scaling)

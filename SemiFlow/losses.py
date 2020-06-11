@@ -16,11 +16,15 @@ class Loss(Layer):
         self.fn = fn
         self.name = name
         self._fn_kwargs = kwargs
+        self.input_value = None
+        self.y_true = None
         self.isLoss = True  # To distinguish layer and loss. It maybe redundant.
 
     def ForwardPropagation(self, y_true):
         x = self.inbound[0]
-        self.output_value = self.fn(y_true, x.output_value, **self._fn_kwargs)
+        self.input_value = x.output_value
+        self.output_value = self.fn(y_true, self.input_value, **self._fn_kwargs)
+        self.y_true = y_true
         return self.output_value
 
     def BackwardPropagation(self, **kwargs):
@@ -72,8 +76,40 @@ class CategoricalCrossentropy(Loss):
             name=name,
             label_smoothing=label_smoothing)
 
-    def BackwardPropagation(self, **kwargs):
-        pass
+    def BackwardPropagation(self, grads=None, **kwargs):
+        print("This is BP of CE ", self.input_value.shape)
+        if not grads:
+            grads = backend.ones_like(self.output_value)
+        # Todo CategoricalCrossentropy.BackwardPropagation
+        return grads * backend.multiply(self.y_true, 1 / self.input_value)
+
+
+class SoftmaxCategoricalCrossentropy(Loss):
+    """
+    If the activation function of layer is softmax and loss function is CategoricalCrossentropy,
+    Linear() will replace it. SoftmaxCategoricalCrossentropy will become loss function.
+
+    """
+
+    def __init__(self, name="softmax_categorical_crossentropy"):
+        super(SoftmaxCategoricalCrossentropy, self).__init__(
+            fn=softmax_categorical_crossentropy,
+            name=name)
+
+    def ForwardPropagation(self, y_true):
+        x = self.inbound[0]
+        self.input_value = x.output_value
+        self.y_pred, self.output_value = self.fn(y_true, self.input_value, **self._fn_kwargs)
+        self.y_true = y_true
+        return self.output_value
+
+    def BackwardPropagation(self, grads=None, **kwargs):
+        """
+        Returns: shape: the number of data * the number of parameters
+        """
+        if not grads:
+            grads = backend.ones_like(self.output_value)
+        return grads * (self.y_pred - self.y_true)
 
 
 # Loss function
@@ -129,6 +165,32 @@ def categorical_crossentropy(y_true, y_pred, label_smoothing=0):
     return backend.sum(-backend.sum(y_true * backend.log(y_pred), axis=-1), axis=0)
 
 
+def softmax_categorical_crossentropy(y_true, logits, axis=-1):
+    """softmax activation function
+    Args:
+        x:logits
+        axis:
+    softmax = exp(logits) / sum(exp(logits), axis)
+    Returns:
+
+    """
+    x = logits
+    ndim = backend.ndim(x)
+    if ndim == 2:
+        y_pred = backend.exp(x) / backend.sum(backend.exp(x), axis=-1, keepdims=True)
+    elif ndim > 2:
+        e = backend.exp(x - backend.max(x, axis=axis, keepdims=True))
+        s = backend.sum(e, axis=axis, keepdims=True)
+        y_pred = e / s
+    else:
+        raise ValueError('Cannot apply softmax to a tensor that is 1D. '
+                         'Received input: %s' % x)
+    epsilon = backend.finfo(backend.float32).eps
+    y_pred[y_pred > 1 - epsilon] = 1 - epsilon
+    y_pred[y_pred < epsilon] = epsilon
+    return y_pred, backend.sum(-backend.sum(y_true * backend.log(y_pred), axis=-1), axis=0)
+
+
 def get(loss):
     if not loss:
         raise ValueError('You should specify a loss function')
@@ -151,5 +213,7 @@ def searchLoss(loss_str: str):
         return BinaryCrossentropy()
     elif loss_str == 'categorical_crossentropy':
         return CategoricalCrossentropy()
+    elif loss_str == 'softmax_categorical_crossentropy':
+        return SoftmaxCategoricalCrossentropy()
     else:
         raise ValueError('Could not support ', loss_str)

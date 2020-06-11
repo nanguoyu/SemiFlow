@@ -12,16 +12,18 @@ def test_sigmoid():
     SIGMOID = Sigmoid()
     M = SIGMOID.ForwardPropagation(np.array([[3, -1], [0, 2]]))
     N = SIGMOID.BackwardPropagation(np.array([[1., -2.], [-7, 0.2]]))
+    # print('\n', M)
+    # print('\n', N)
     assert round(M[0][0],
                  3) == 0.953 and round(M[0][1],
                                        3) == 0.269 and round(M[1][0],
                                                              3) == 0.5 and round(M[1][1],
                                                                                  3) == 0.881
     assert round(N[0][0],
-                 3) == 0.197 and round(N[0][1],
-                                       3) == 0.105 and round(N[1][0],
-                                                             3) == 0.001 and round(N[1][1],
-                                                                                   3) == 0.248
+                 3) == 0.045 and round(N[0][1],
+                                       3) == -0.393 and round(N[1][0],
+                                                              3) == -1.75 and round(N[1][1],
+                                                                                    3) == 0.021
 
 
 def test_Relu():
@@ -44,11 +46,11 @@ def test_Tanh():
                                                               3) == 0 and round(M[1][1],
                                                                                 3) == 0.964
     assert round(N[0][0],
-                 3) == round(4.19974342e-01, 3) and round(N[0][1],
-                                                          3) == round(7.06508249e-02, 3) and round(N[1][0],
-                                                                                                   3) == round(
-        3.32610934e-06, 3) and round(N[1][1],
-                                     3) == round(9.61042983e-01, 3)
+                 3) == round(0.00986604, 3) and round(N[0][1],
+                                                      3) == round(-0.83994868, 3) and round(N[1][0],
+                                                                                            3) == round(
+        -7, 3) and round(N[1][1],
+                         3) == round(0.01413016, 3)
 
 
 def test_Softplus():
@@ -63,10 +65,12 @@ def test_Softplus():
                                                              3) == 0.693 and round(M[1][1],
                                                                                    3) == 2.127
     assert round(N[0][0],
-                 3) == 0.269 and round(N[0][1],
-                                       3) == 0.881 and round(N[1][0],
-                                                             3) == 0.999 and round(N[1][1],
-                                                                                   3) == 0.450
+                 3) == round(0.04742587, 3) and round(N[0][1],
+                                                      3) == round(-1.46211716, 3) and round(N[1][0],
+                                                                                            3) == round(-3.5,
+                                                                                                        3) and round(
+        N[1][1],
+        3) == round(0.02384058, 3)
 
 
 def test_Softmax():
@@ -74,6 +78,12 @@ def test_Softmax():
                   [1., 4., 9.]])
     SOFTMAX = Softmax()
     M = SOFTMAX.ForwardPropagation(x)
-    N = SOFTMAX.BackwardPropagation(np.array([[1., -2.], [-7., 0.2]]))
+    N = SOFTMAX.BackwardPropagation(grads=np.array([[1., 1.]]))
     print('\n', M)
     print('\n', N)
+    assert round(M[0][0], 3) == round(9.00305732e-02, 3)
+    assert round(M[0][1], 3) == round(2.44728471e-01, 3)
+    assert round(M[0][2], 3) == round(6.65240956e-01, 3)
+    assert round(M[1][0], 3) == round(3.33106430e-04, 3)
+    assert round(M[1][1], 3) == round(6.69062149e-03, 3)
+    assert round(M[1][2], 3) == round(9.92976272e-01, 3)
