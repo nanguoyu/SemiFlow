@@ -6,6 +6,7 @@
 from .engine.core import backend
 from .layer.core import Layer
 from .layer.input import InputLayer
+from .activations import Activation
 from .utils import DataShuffle, split_train_val
 from . import optimizers
 
@@ -139,7 +140,7 @@ class Sequential(Model):
     def summary(self):
         print("\n" + 20 * "=")
         layer = self.first_layer
-        while layer:
+        while layer and not isinstance(layer, InputLayer) and not isinstance(layer, Activation):
             print(layer.name)
             print(20 * "-")
             if not layer.outbound:

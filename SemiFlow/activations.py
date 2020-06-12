@@ -85,7 +85,6 @@ class Sigmoid(Activation):
     def BackwardPropagation(self, grads=None):
         if grads is None:
             grads = backend.ones_like(self.output_value)
-        print(grads.shape)
         return grads * self.output_value * (1 - self.output_value)
 
 
@@ -101,7 +100,7 @@ class Relu(Activation):
     def BackwardPropagation(self, grads=None):
         if grads is None:
             grads = backend.ones_like(self.output_value)
-        return grads * (self.output_value > 0)
+        return grads * (self.output_value > 0.0)
 
 
 class Tanh(Activation):

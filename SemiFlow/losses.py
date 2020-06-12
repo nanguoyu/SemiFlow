@@ -39,8 +39,11 @@ class MeanSquaredError(Loss):
             fn=mean_squared_error,
             name=name)
 
-    def BackwardPropagation(self, **kwargs):
-        pass
+    def BackwardPropagation(self, grads=None, **kwargs):
+        # Todo Check MAE.BP
+        if not grads:
+            grads = backend.ones_like(self.output_value)
+        grads * (self.input_value - self.y_true)
 
 
 class MeanAbsoluteError(Loss):
@@ -49,8 +52,10 @@ class MeanAbsoluteError(Loss):
             fn=mean_absolute_error,
             name=name)
 
-    def BackwardPropagation(self, **kwargs):
-        pass
+    def BackwardPropagation(self, grads=None, **kwargs):
+        if not grads:
+            grads = backend.ones_like(self.output_value)
+        return grads * backend.sign(self.input_value - self.y_true)
 
 
 class BinaryCrossentropy(Loss):
@@ -62,7 +67,7 @@ class BinaryCrossentropy(Loss):
             name=name,
             label_smoothing=label_smoothing)
 
-    def BackwardPropagation(self, **kwargs):
+    def BackwardPropagation(self, grads=None, **kwargs):
         pass
 
 
@@ -188,7 +193,7 @@ def softmax_categorical_crossentropy(y_true, logits, axis=-1):
     epsilon = backend.finfo(backend.float32).eps
     y_pred[y_pred > 1 - epsilon] = 1 - epsilon
     y_pred[y_pred < epsilon] = epsilon
-    return y_pred, backend.sum(-backend.sum(y_true * backend.log(y_pred), axis=-1), axis=0)
+    return y_pred, backend.sum(-backend.sum(y_true * backend.log(y_pred), axis=-1), axis=0)  # /y_pred.shape[0]
 
 
 def get(loss):

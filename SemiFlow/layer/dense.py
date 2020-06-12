@@ -41,15 +41,20 @@ class Dense(Layer):
         Returns: gradients of this layer
 
         """
-
+        print("BP:", self.name)
+        # Activation
+        grad = self.activation.BackwardPropagation(grads=grad)
+        # Layer
         x, = [layer.output_value for layer in self.inbound]  # TODO support multi-inputs
         w = self.params['kernel']
         b = self.params['bias']
 
         if grad is None:
             grad = backend.ones_like(self.output_value)
-
-        grad_wrt_w = grad * x
+        # print("x.T.shape", x.T.shape, "grad.shape", grad.shape)
+        # print("w.shape", w.shape, "b.shape", b.shape)
+        grad_wrt_w = backend.matmul(x.T, grad)
+        # grad_wrt_w = x * grad
         while backend.ndim(grad_wrt_w) > len(backend.shape(w)):
             grad_wrt_w = backend.sum(grad_wrt_w, axis=0)
         for axis, size in enumerate(backend.shape(w)):
@@ -63,7 +68,13 @@ class Dense(Layer):
             if size == 1:
                 grad_wrt_b = backend.sum(grad_wrt_b, axis=axis, keepdims=True)
 
-        return [grad_wrt_w, grad_wrt_b]
+        grad_wrt_x = backend.matmul(grad, grad_wrt_w.T)
+        # print("grad_wrt_w.shape", grad_wrt_w.shape,"grad_wrt_b.shape", grad_wrt_b.shape, "grad_wrt_x.shape",
+        # grad_wrt_x.shape)
+
+        self.grads['kernel'] = grad_wrt_w
+        self.grads['bias'] = grad_wrt_b
+        return grad_wrt_x
 
     def ForwardPropagation(self):
         """
@@ -72,13 +83,16 @@ class Dense(Layer):
         Returns:output
 
         """
+        print("FP: ", self.name)
         x = self.inbound[0]
-        logits = backend.matmul(x.output_value, self.params['kernel']) + self.params['bias']
-        # ToDo Implement logits
+        w = self.params['kernel']
+        b = self.params['bias']
+        logits = backend.matmul(x.output_value, w) + b
         self.output_value = self.activation.ForwardPropagation(logits)
         return self.output_value
 
     def InitParams(self):
+        print("Init ", self.name)
         self.isInitialized = True
         output_shape = self.units
         if hasattr(self, 'input_shape'):
@@ -93,6 +107,10 @@ class Dense(Layer):
         self.params = {
             'kernel': kernel,
             'bias': bias}
+        self.grads = {
+            'kernel': backend.array([]),
+            'bias': backend.array([])
+        }
 
     def UpdateParams(self):
         pass

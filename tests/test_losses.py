@@ -85,5 +85,5 @@ def test_softmax_categorical_crossentropy():
     Loss.inbound.append(Input)
     loss_value = Loss.ForwardPropagation(y_true=y_true)
     Loss.BackwardPropagation()
-    print(loss_value)
+    # print(loss_value)
     assert round(loss_value, 3) == round(0.11110606741309674, 3)

@@ -29,7 +29,7 @@ def test_compute_gradients():
 
     train_op = GradientDescentOptimizer(learning_rate=0.005, name='GD').minimize(loss)
     feed_dict = {x: input_x, y_: input_y}
-
+    print("\n")
     with Session() as sess:
         for step in range(20):
             loss_value = sess.run(loss, feed_dict=feed_dict)

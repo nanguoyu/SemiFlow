@@ -45,6 +45,8 @@ class Layer(object):
         self.shape = None
         # The params
         self.params = None
+        # The grads
+        self.grads = None
         # The output_value
         self.output_value = None
 

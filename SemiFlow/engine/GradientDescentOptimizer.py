@@ -30,7 +30,7 @@ class MinimizationOperation(Operation):
         for var in DEFAULT_GRAPH.variables:
             if var in grad_table:
                 grad = grad_table[var]
-                # print("\t [grad of ", var.name, "]", grad)
-                old_value = var.output_value
+                print("\t [grad of ", var.name, "]", grad)
+                # old_value = var.output_value
                 var.output_value -= self.learning_rate * grad
                 # print("\t [", var.name, "] changed from", old_value, "to", var.output_value)
