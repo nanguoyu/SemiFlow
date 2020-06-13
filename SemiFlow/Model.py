@@ -15,7 +15,7 @@ class Model(object):
     def __init__(self):
         """Abstract model constructor
         """
-        raise NotImplementedError
+        pass
 
     def fit(self, **kwargs):
         """Train the model by epoch learning rule

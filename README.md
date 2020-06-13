@@ -17,30 +17,30 @@ cd SemiFlow
 pip install .
 ```
 
-## A Tensorflow style part.
-
-### Features
-- [x] computational graph
-    - [x] feedforward
-    - [x] numpy style operator
-    - [x] compute gradient
-- [x] Auto differentiate
-- [ ] <del>Tensor support</del>
-
-### Examples
-- Regression a line: [Regression a line](tests/test_engine_compute_gradients.py)
-
-
-### Blogs
- - [[SemiFlow 动手实现深度学习框架 00] 初步的计划](https://www.nanguoyu.com/semiflow-00)
-    - Code: [A naive dense layer in a python file](./A%20naive%20example)
- - [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
-
-
 ## A Keras style part
-> In the development, I find it is hard for me to implement a deep learning 
-> framework support functional model like the Pytorch. As a result, I changed
-> the plan to develop a sequential model after finish tensorflow style design.
+
+### Quick start
+> A classification model trained in MNIST.
+
+    ``` Python 
+    # Import SemiFlow
+    
+    from SemiFlow.layer import Dense
+    from SemiFlow.Model import Sequential
+    from SemiFlow.utils.dataset import mnist
+    import numpy as np
+    
+    # Prepare MNIST data.
+    train_set, valid_set, test_set = mnist(one_hot=True)
+
+    x_train, y_train = train_set[0], train_set[1]
+    x_test, y_test = test_set[0], test_set[1]
+    x_val, y_val = valid_set[0], valid_set[1]
+    
+
+    ```
+   
+
 
 ### Features
 
@@ -65,6 +65,27 @@ Progress
     - [x] Train MNIST
 - [ ] CUDA support
 - [ ] Examples and other docs
+
+
+## A Tensorflow style part.
+
+### Features
+- [x] computational graph
+    - [x] feedforward
+    - [x] numpy style operator
+    - [x] compute gradient
+- [x] Auto differentiate
+- [ ] <del>Tensor support</del>
+
+### Examples
+- Regression a line: [Regression a line](tests/test_engine_compute_gradients.py)
+
+
+### Blogs
+ - [[SemiFlow 动手实现深度学习框架 00] 初步的计划](https://www.nanguoyu.com/semiflow-00)
+    - Code: [A naive dense layer in a python file](./A%20naive%20example)
+ - [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
+
 
 ## Reference
 - [The Supervised Machine Learning book(An upcoming textbook)](http://smlbook.org/)
