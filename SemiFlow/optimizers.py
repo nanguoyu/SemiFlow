@@ -71,40 +71,48 @@ class GradientDescentOptimizer(Optimizer):
     def ForwardPropagation(self):
         # TODO optimizer.GradientDescentOptimizer.ForwardPropagation
         postorder_nodes = get_prerequisite(last_layer=self.loss)
-        i = 0
-        for xbatch, ybatch in self.spliter.get_batch():
-            print("Batch ", i, " size: ", xbatch.shape, ybatch.shape)
-            # Forward Propagation
-            for node in postorder_nodes:
-                if isinstance(node, InputLayer):
-                    node.ForwardPropagation(feed=xbatch)
-                elif isinstance(node, losses.Loss):
-                    node.ForwardPropagation(y_true=ybatch)
-                    # Back Propagation
-                    compute_gradients(node)
-                elif isinstance(node, Layer):
-                    node.ForwardPropagation()
-
-            print("loss_value" + "-" * 20, self.loss.output_value)
-            self.UpdateParameters()
-            i += 1
+        for j in range(self.epochs):
+            print("[epoch", j, "]")
+            i = 0
+            for xbatch, ybatch in self.spliter.get_batch():
+                # Forward Propagation
+                for node in postorder_nodes:
+                    if isinstance(node, InputLayer):
+                        node.ForwardPropagation(feed=xbatch)
+                    elif isinstance(node, losses.Loss):
+                        node.ForwardPropagation(y_true=ybatch)
+                        # Back Propagation
+                        compute_gradients(node)
+                        # self.BackwardPropagation()
+                    elif isinstance(node, Layer):
+                        node.ForwardPropagation()
+                print("Batch ", i, "loss_value", self.loss.output_value)
+                self.UpdateParameters()
+                i += 1
 
     def BackwardPropagation(self):
-        for xbatch, ybatch in self.spliter.get_batch():
-            # xbatch, ybatch
-            pass
+        # TODO finish this function and replace compute_gradients
+        def bp(node: Layer, grad=None):
+            grad = node.BackwardPropagation(grad=grad)
+            if len(node.inbound) > 0:
+                for child in node.inbound:
+                    # print(node.name, "child", child.name)
+                    if not isinstance(child, InputLayer) and isinstance(child, Layer):
+                        bp(child, grad)
+
+        bp(self.loss)
 
     def UpdateParameters(self):
         postorder_nodes = get_prerequisite(last_layer=self.loss)
         for node in postorder_nodes:
             if len(node.inbound) > 0 and node.params:
-                print("Update: ", node.name)
+                # print("Update: ", node.name)
                 params = node.params.keys()
                 for param in params:
                     node.params[param] -= self.learning_rate * node.grads[param]
 
 
-def get(opt, loss, learning_rate=0.0005):
+def get(opt, loss, learning_rate=0.005):
     if isinstance(opt, six.string_types):
         opt = opt.lower()
         if opt == 'sgd':

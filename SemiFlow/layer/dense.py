@@ -41,59 +41,59 @@ class Dense(Layer):
         Returns: gradients of this layer
 
         """
-        print("BP:", self.name)
+        if grad is None:
+            grad = backend.ones_like(self.output_value)
+        # print("BP:", self.name+"."+self.activation.name)
         # Activation
         grad = self.activation.BackwardPropagation(grads=grad)
+        # print("BP:", self.name)
         # Layer
         x, = [layer.output_value for layer in self.inbound]  # TODO support multi-inputs
         w = self.params['kernel']
         b = self.params['bias']
-
-        if grad is None:
-            grad = backend.ones_like(self.output_value)
         # print("x.T.shape", x.T.shape, "grad.shape", grad.shape)
         # print("w.shape", w.shape, "b.shape", b.shape)
         grad_wrt_w = backend.matmul(x.T, grad)
-        # grad_wrt_w = x * grad
-        while backend.ndim(grad_wrt_w) > len(backend.shape(w)):
-            grad_wrt_w = backend.sum(grad_wrt_w, axis=0)
-        for axis, size in enumerate(backend.shape(w)):
-            if size == 1:
-                grad_wrt_w = backend.sum(grad_wrt_w, axis=axis, keepdims=True)
+        # while backend.ndim(grad_wrt_w) > len(backend.shape(w)):
+        #     grad_wrt_w = backend.sum(grad_wrt_w, axis=0)
+        # for axis, size in enumerate(backend.shape(w)):
+        #     if size == 1:
+        #         grad_wrt_w = backend.sum(grad_wrt_w, axis=axis, keepdims=True)
 
-        grad_wrt_b = grad
-        while backend.ndim(grad_wrt_b) > len(backend.shape(b)):
-            grad_wrt_b = backend.sum(grad_wrt_b, axis=0)
-        for axis, size in enumerate(backend.shape(b)):
-            if size == 1:
-                grad_wrt_b = backend.sum(grad_wrt_b, axis=axis, keepdims=True)
+        grad_wrt_b = backend.sum(grad, axis=0)
+        # while backend.ndim(grad_wrt_b) > len(backend.shape(b)):
+        #     grad_wrt_b = backend.sum(grad_wrt_b, axis=0)
+        # for axis, size in enumerate(backend.shape(b)):
+        #     if size == 1:
+        #         grad_wrt_b = backend.sum(grad_wrt_b, axis=axis, keepdims=True)
 
-        grad_wrt_x = backend.matmul(grad, grad_wrt_w.T)
         # print("grad_wrt_w.shape", grad_wrt_w.shape,"grad_wrt_b.shape", grad_wrt_b.shape, "grad_wrt_x.shape",
         # grad_wrt_x.shape)
 
         self.grads['kernel'] = grad_wrt_w
         self.grads['bias'] = grad_wrt_b
+        grad_wrt_x = backend.matmul(grad, w.T)
         return grad_wrt_x
 
     def ForwardPropagation(self):
+        assert self.isInitialized, "you should init_para"
         """
         logits = x * w+b
         output = activation(logits)
         Returns:output
 
         """
-        print("FP: ", self.name)
+        # print("FP:", self.name)
         x = self.inbound[0]
         w = self.params['kernel']
         b = self.params['bias']
         logits = backend.matmul(x.output_value, w) + b
+        # print("FP:", self.name+"."+self.activation.name)
         self.output_value = self.activation.ForwardPropagation(logits)
         return self.output_value
 
     def InitParams(self):
-        print("Init ", self.name)
-        self.isInitialized = True
+        # print("Init ", self.name)
         output_shape = self.units
         if hasattr(self, 'input_shape'):
             input_shape = self.input_shape
@@ -103,7 +103,8 @@ class Dense(Layer):
             self.shape = (input_shape, output_shape)
         # print(self.name+'.InitParams', self.shape)
         kernel = self.kernel_initializer(shape=[input_shape, output_shape])
-        bias = self.kernel_initializer(shape=[output_shape])
+        # bias = self.kernel_initializer(shape=[output_shape])
+        bias = self.kernel_initializer(shape=[1]) * backend.ones([output_shape]).T
         self.params = {
             'kernel': kernel,
             'bias': bias}
@@ -111,6 +112,4 @@ class Dense(Layer):
             'kernel': backend.array([]),
             'bias': backend.array([])
         }
-
-    def UpdateParams(self):
-        pass
+        self.isInitialized = True

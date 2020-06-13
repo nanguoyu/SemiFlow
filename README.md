@@ -46,13 +46,13 @@ pip install .
 
 Progress
 - [x] Dense layer
-- [ ] Model manager for training
-- [ ] Optimizer
-- [ ] Activation function
+- [x] Model manager for training
+- [x] Optimizer
+- [x] Activation function
     - [x] ReLU
     - [x] Sigmoid
     - [x] tanh
-- [ ] Loss
+- [x] Loss
     - [x] mse
     - [x] mae
     - [x] bce
@@ -62,7 +62,7 @@ Progress
     - [ ] Pooling layer
     - [ ] Stochastic gradient descent
 - [ ] Big dataset support
-    - [ ] Train MNIST
+    - [x] Train MNIST
 - [ ] CUDA support
 - [ ] Examples and other docs
 

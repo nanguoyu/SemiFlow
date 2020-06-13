@@ -60,6 +60,7 @@ class Activation(Layer):
 class Linear(Activation):
     def __init__(self, **kwargs):
         super(Linear, self).__init__(**kwargs)
+        self.name = 'linear'
 
     def ForwardPropagation(self, inputs):
         self.output_value = inputs
@@ -76,6 +77,7 @@ class Linear(Activation):
 class Sigmoid(Activation):
     def __init__(self, **kwargs):
         super(Sigmoid, self).__init__(**kwargs)
+        self.name = 'sigmoid'
 
     def ForwardPropagation(self, inputs):
         self.output_value = sigmoid(inputs)
@@ -85,12 +87,13 @@ class Sigmoid(Activation):
     def BackwardPropagation(self, grads=None):
         if grads is None:
             grads = backend.ones_like(self.output_value)
-        return grads * self.output_value * (1 - self.output_value)
+        return grads * self.input_value * (1 - self.input_value)
 
 
 class Relu(Activation):
     def __init__(self, **kwargs):
         super(Relu, self).__init__(**kwargs)
+        self.name = 'relu'
 
     def ForwardPropagation(self, inputs):
         self.output_value = relu(inputs)
@@ -100,12 +103,13 @@ class Relu(Activation):
     def BackwardPropagation(self, grads=None):
         if grads is None:
             grads = backend.ones_like(self.output_value)
-        return grads * (self.output_value > 0.0)
-
+        grad_wrt_x = (self.input_value > 0.0) * grads
+        return grad_wrt_x
 
 class Tanh(Activation):
     def __init__(self, **kwargs):
         super(Tanh, self).__init__(**kwargs)
+        self.name = 'tanh'
 
     def ForwardPropagation(self, inputs):
         self.output_value = tanh(inputs)
@@ -115,12 +119,13 @@ class Tanh(Activation):
     def BackwardPropagation(self, grads=None):
         if grads is None:
             grads = backend.ones_like(self.output_value)
-        return grads * (1 - self.output_value ** 2)
+        return grads * (1 - self.input_value ** 2)
 
 
 class Softplus(Activation):
     def __init__(self, **kwargs):
         super(Softplus, self).__init__(**kwargs)
+        self.name = 'softplus'
 
     def ForwardPropagation(self, inputs):
         self.output_value = softplus(inputs)
@@ -136,6 +141,7 @@ class Softplus(Activation):
 class Softmax(Activation):
     def __init__(self, **kwargs):
         super(Activation, self).__init__(**kwargs)
+        self.name = 'softmax'
 
     def ForwardPropagation(self, inputs):
         self.input_value = inputs

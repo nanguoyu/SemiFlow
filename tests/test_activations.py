@@ -36,10 +36,11 @@ def test_sigmoid():
                                                              3) == 0.5 and round(M[1][1],
                                                                                  3) == 0.881
     assert round(N[0][0],
-                 3) == 0.045 and round(N[0][1],
-                                       3) == -0.393 and round(N[1][0],
-                                                              3) == -1.75 and round(N[1][1],
-                                                                                    3) == 0.021
+                 3) == round(-6, 3) and round(N[0][1],
+                                              3) == round(4, 3) and round(N[1][0],
+                                                                          3) == round(0, 3) and round(N[1][1],
+                                                                                                      3) == round(-0.4,
+                                                                                                                  3)
 
 
 def test_Relu():
@@ -62,11 +63,11 @@ def test_Tanh():
                                                               3) == 0 and round(M[1][1],
                                                                                 3) == 0.964
     assert round(N[0][0],
-                 3) == round(0.00986604, 3) and round(N[0][1],
-                                                      3) == round(-0.83994868, 3) and round(N[1][0],
-                                                                                            3) == round(
+                 3) == round(-8, 3) and round(N[0][1],
+                                              3) == round(0, 3) and round(N[1][0],
+                                                                          3) == round(
         -7, 3) and round(N[1][1],
-                         3) == round(0.01413016, 3)
+                         3) == round(-0.6, 3)
 
 
 def test_Softplus():

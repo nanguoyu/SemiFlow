@@ -84,12 +84,14 @@ class Sequential(Model):
     def compile(self,
                 loss=None,
                 optimizer=None,
+                learning_rate=None,
                 **kwargs):
         """
 
         Args:
             loss: loss function
             optimizer: learning method
+            learning_rate: learning rate
 
         """
         if not optimizer:
@@ -98,7 +100,7 @@ class Sequential(Model):
             raise ValueError("loss is needed")
 
         # Optimizer
-        self.optimizer = optimizers.get(optimizer, loss=loss)
+        self.optimizer = optimizers.get(optimizer, loss=loss, learning_rate=learning_rate)
         # add Input_layer
         if hasattr(self.first_layer, "input_shape"):
             shape = self.first_layer.input_shape

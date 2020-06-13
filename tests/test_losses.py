@@ -27,7 +27,7 @@ def test_mse():
     loss_value = Loss.ForwardPropagation(y_true=y_true)
     # print(loss_value)
     # Todo check this test method
-    assert loss_value[0] == 5 and loss_value[1] == 10
+    assert loss_value[0] == 5 / y_true.shape[0] and loss_value[1] == 10 / y_true.shape[0]
 
 
 def test_mae():
@@ -42,7 +42,7 @@ def test_mae():
     loss_value = Loss.ForwardPropagation(y_true=y_true)
     # print(loss_value)
     # Todo check this test method
-    assert loss_value[0] == 4 and loss_value[1] == 4.5
+    assert loss_value[0] == 4 / y_true.shape[0] and loss_value[1] == 4.5 / y_true.shape[0]
 
 
 def test_categorical_crossentropy():
@@ -56,7 +56,7 @@ def test_categorical_crossentropy():
     Loss.inbound.append(Input)
     loss_value = Loss.ForwardPropagation(y_true=y_true)
     # print(loss_value)
-    assert 0.44 == round(loss_value, 2)
+    assert 0.44 / y_true.shape[0] == round(loss_value, 2)
 
 
 def test_binary_crossentropy():
@@ -70,7 +70,7 @@ def test_binary_crossentropy():
     Loss.inbound.append(Input)
     loss_value = Loss.ForwardPropagation(y_true=y_true)
     # print(loss_value)
-    assert 0.71 == round(loss_value, 2)
+    assert 0.357 == round(loss_value, 3)
 
 
 def test_softmax_categorical_crossentropy():
@@ -86,4 +86,4 @@ def test_softmax_categorical_crossentropy():
     loss_value = Loss.ForwardPropagation(y_true=y_true)
     Loss.BackwardPropagation()
     # print(loss_value)
-    assert round(loss_value, 3) == round(0.11110606741309674, 3)
+    assert round(loss_value, 3) == round(0.027776516853274126, 3)

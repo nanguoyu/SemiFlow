@@ -8,7 +8,7 @@ import setuptools
 
 setuptools.setup(
     name='SemiFlow',
-    version='0.1.2',
+    version='1.0.0',
     description='Implement a deep learning framework from zero(strictly Numpy).',
     url='https://github.com/nanguoyu/SemiFlow',
     author='Dong Wang (nanguoyu)',

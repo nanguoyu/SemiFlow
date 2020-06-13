@@ -25,6 +25,7 @@ class Loss(Layer):
         self.input_value = x.output_value
         self.output_value = self.fn(y_true, self.input_value, **self._fn_kwargs)
         self.y_true = y_true
+        self.output_value /= y_true.shape[0]
         return self.output_value
 
     def BackwardPropagation(self, **kwargs):
@@ -43,7 +44,7 @@ class MeanSquaredError(Loss):
         # Todo Check MAE.BP
         if not grads:
             grads = backend.ones_like(self.output_value)
-        grads * (self.input_value - self.y_true)
+        return grads * (self.input_value - self.y_true) / self.y_true.shape[0]
 
 
 class MeanAbsoluteError(Loss):
@@ -55,7 +56,7 @@ class MeanAbsoluteError(Loss):
     def BackwardPropagation(self, grads=None, **kwargs):
         if not grads:
             grads = backend.ones_like(self.output_value)
-        return grads * backend.sign(self.input_value - self.y_true)
+        return grads * backend.sign(self.input_value - self.y_true) / self.y_true.shape[0]
 
 
 class BinaryCrossentropy(Loss):
@@ -86,7 +87,7 @@ class CategoricalCrossentropy(Loss):
         if not grads:
             grads = backend.ones_like(self.output_value)
         # Todo CategoricalCrossentropy.BackwardPropagation
-        return grads * backend.multiply(self.y_true, 1 / self.input_value)
+        return grads * backend.multiply(self.y_true, 1 / self.input_value) / self.y_true.shape[0]
 
 
 class SoftmaxCategoricalCrossentropy(Loss):
@@ -102,19 +103,23 @@ class SoftmaxCategoricalCrossentropy(Loss):
             name=name)
 
     def ForwardPropagation(self, y_true):
+        # print("FP:", self.name)
         x = self.inbound[0]
         self.input_value = x.output_value
-        self.y_pred, self.output_value = self.fn(y_true, self.input_value, **self._fn_kwargs)
+        self.output_value = self.fn(y_true, self.input_value, **self._fn_kwargs)
         self.y_true = y_true
+        self.output_value /= y_true.shape[0]
         return self.output_value
 
     def BackwardPropagation(self, grads=None, **kwargs):
         """
         Returns: shape: the number of data * the number of parameters
         """
+        # print("BP:", self.name)
         if not grads:
             grads = backend.ones_like(self.output_value)
-        return grads * (self.y_pred - self.y_true)
+        # return grads * (self.y_pred - self.y_true) / self.y_true.shape[0]
+        return grads * (softmax2(self.input_value, t=1) - self.y_true) / self.y_true.shape[0]
 
 
 # Loss function
@@ -180,20 +185,15 @@ def softmax_categorical_crossentropy(y_true, logits, axis=-1):
 
     """
     x = logits
-    ndim = backend.ndim(x)
-    if ndim == 2:
-        y_pred = backend.exp(x) / backend.sum(backend.exp(x), axis=-1, keepdims=True)
-    elif ndim > 2:
-        e = backend.exp(x - backend.max(x, axis=axis, keepdims=True))
-        s = backend.sum(e, axis=axis, keepdims=True)
-        y_pred = e / s
-    else:
-        raise ValueError('Cannot apply softmax to a tensor that is 1D. '
-                         'Received input: %s' % x)
+    x_max = backend.max(x, axis=axis, keepdims=True)
+    exps = backend.exp(x - x_max)
+    y_pred = exps / backend.sum(exps, axis=axis, keepdims=True)
     epsilon = backend.finfo(backend.float32).eps
     y_pred[y_pred > 1 - epsilon] = 1 - epsilon
     y_pred[y_pred < epsilon] = epsilon
-    return y_pred, backend.sum(-backend.sum(y_true * backend.log(y_pred), axis=-1), axis=0)  # /y_pred.shape[0]
+    return backend.sum(-backend.sum(y_true * backend.log(y_pred), axis=-1), axis=0) / y_pred.shape[0]
+    # nll = -(log_softmax(logits, t=1, axis=1) * y_true).sum(axis=-1)
+    # return backend.sum(nll, axis=0) / y_true.shape[0]
 
 
 def get(loss):
@@ -222,3 +222,18 @@ def searchLoss(loss_str: str):
         return SoftmaxCategoricalCrossentropy()
     else:
         raise ValueError('Could not support ', loss_str)
+
+
+def log_softmax(x, t=1.0, axis=-1):
+    x_ = x / t
+    x_max = backend.max(x_, axis=axis, keepdims=True)
+    exps = backend.exp(x_ - x_max)
+    exp_sum = backend.sum(exps, axis=axis, keepdims=True)
+    return x_ - x_max - backend.log(exp_sum)
+
+
+def softmax2(x, t=1.0, axis=-1):
+    x_ = x / t
+    x_max = backend.max(x_, axis=axis, keepdims=True)
+    exps = backend.exp(x_ - x_max)
+    return exps / backend.sum(exps, axis=axis, keepdims=True)

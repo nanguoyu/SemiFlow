@@ -5,3 +5,4 @@
 """
 from .core import Layer
 from .dense import Dense
+from .input import InputLayer
