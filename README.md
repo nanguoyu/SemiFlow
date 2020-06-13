@@ -22,53 +22,54 @@ pip install .
 ### Quick start
 > A classification model trained in MNIST.
 
-    ``` Python 
-    # Import SemiFlow
-    
-    from SemiFlow.layer import Dense
-    from SemiFlow.Model import Sequential
-    from SemiFlow.utils.dataset import mnist
-    import numpy as np
-    
-    # Prepare MNIST data.
-    train_set, valid_set, test_set = mnist(one_hot=True)
+``` Python 
+# Import SemiFlow
 
-    x_train, y_train = train_set[0], train_set[1]
-    x_test, y_test = test_set[0], test_set[1]
-    x_val, y_val = valid_set[0], valid_set[1]
-    
-    # Specify trainig setting
-    
-    num_classes = 10
-    batch_size = 128
-    epochs = 10
-    
-    # Init a sequential model
-    model = Sequential()
-    
-    # Add the first layer and specify the input shape
-    model.add(Dense(units=256, activation='relu', input_shape=(784,)))
-    # Add more layer
-    model.add(Dense(units=128, activation='relu'))
-    model.add(Dense(units=64, activation='relu'))
-    model.add(Dense(num_classes, activation='softmax'))
-    
-    # Pring model structure
-    model.summary()
-    
-    # Compile model and specify optimizer and loss function
-    model.compile(loss='categorical_crossentropy', optimizer='RMSprop', learning_rate=0.05)
+from SemiFlow.layer import Dense
+from SemiFlow.Model import Sequential
+from SemiFlow.utils.dataset import mnist
+import numpy as np
 
-    # Train model
-    history = model.fit(x_train, y_train,
-                    batch_size=batch_size,
-                    epochs=epochs,
-                    verbose=1,
-                    validation_data=(None, None))
-                    
-    # Evaluate model in test data 
-    score = model.evaluate(x_test, y_test, verbose=0)
-    ```
+# Prepare MNIST data.
+train_set, valid_set, test_set = mnist(one_hot=True)
+
+x_train, y_train = train_set[0], train_set[1]
+x_test, y_test = test_set[0], test_set[1]
+x_val, y_val = valid_set[0], valid_set[1]
+
+# Specify trainig setting
+
+num_classes = 10
+batch_size = 128
+epochs = 10
+
+# Init a sequential model
+model = Sequential()
+
+# Add the first layer and specify the input shape
+model.add(Dense(units=256, activation='relu', input_shape=(784,)))
+# Add more layer
+model.add(Dense(units=128, activation='relu'))
+model.add(Dense(units=64, activation='relu'))
+model.add(Dense(num_classes, activation='softmax'))
+
+# Pring model structure
+model.summary()
+
+# Compile model and specify optimizer and loss function
+model.compile(loss='categorical_crossentropy', optimizer='RMSprop', learning_rate=0.05)
+
+# Train model
+history = model.fit(x_train, y_train,
+                batch_size=batch_size,
+                epochs=epochs,
+                verbose=1,
+                validation_data=(None, None))
+                
+# Evaluate model in test data 
+score = model.evaluate(x_test, y_test, verbose=0)
+
+```
    
 
 
