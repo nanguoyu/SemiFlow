@@ -49,7 +49,7 @@ def test_simple_mlp():
     print(x_train.shape, y_train.shape)
     num_classes = 2
     batch_size = 10
-    epochs = 20
+    epochs = 5
 
     model = Sequential()
     model.add(Dense(units=2, activation='relu', input_shape=(2,)))

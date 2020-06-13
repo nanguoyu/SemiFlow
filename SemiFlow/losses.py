@@ -176,11 +176,13 @@ def categorical_crossentropy(y_true, y_pred, label_smoothing=0):
 
 
 def softmax_categorical_crossentropy(y_true, logits, axis=-1):
-    """softmax activation function
+    """softmax categorical crossentropy function
+
     Args:
-        x:logits
+        y_true:
+        logits:
         axis:
-    softmax = exp(logits) / sum(exp(logits), axis)
+
     Returns:
 
     """

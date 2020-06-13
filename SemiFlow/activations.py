@@ -190,7 +190,7 @@ def sigmoid(x):
 
 
 def relu(x):
-    """ReLu activation function
+    """reLu activation function
 
     # Arguments
         x:Input tensor
