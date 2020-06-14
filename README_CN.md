@@ -6,11 +6,13 @@
 
 <img src="./.github/SemiFlow.png" alt="SemiFlow Logo" style="zoom:50%;" />
 
-English | [中文](README_CN.md)
+[English](README.md) | 中文
 
-SemiFlow is a deep learning framework with auto-differentiation, developing from Numpy. 
+SemiFlow 是一个基于Numpy的支持自动求导的深度学习框架。
 
-## Installation
+------
+
+## 安装
 
 ``` 
 git https://github.com/nanguoyu/SemiFlow.git
@@ -18,8 +20,9 @@ cd SemiFlow
 pip install .
 ```
 
-### Quick start
-> A classification model trained in MNIST.
+### 快速开始
+
+> 一个MNIST分类模型
 
 ``` Python 
 # Import SemiFlow
@@ -72,8 +75,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
 
 
 
-### Features
-
+### 特征
 - [x] Dense layer
 - [x] Model manager for training
 - [x] Optimizer
@@ -96,13 +98,11 @@ score = model.evaluate(x_test, y_test, verbose=0)
 - [ ] Examples and other docs
 
 
-## Other
+## 其他
 
-> There is a independent part in [A computation graph part](SemiFlow/engine). In this part, we develop
-> a deep learning engine like Tensorflow. It also supports auto-differentiation and computation graph. There is
->an example to regress a line in [Regression a line](tests/test_engine_compute_gradients.py). 
->This part is dated and will not be updated. We are going to introduce a new model class like computation
->graph in the future.
+>我们也开发了一个独立的计算图引擎在[A computation graph part](SemiFlow/engine)。它还支持自动微分和计算图。 
+>在[Regression a line](tests/test_engine_compute_gradients.py)中有一个对回归问题的示例。
+>请注意，这部分已过时，将不会更新。将来我们将引入一个新的支持计算图的model类。
 
 ### Features
 - [x] computational graph
