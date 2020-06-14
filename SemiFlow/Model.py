@@ -113,7 +113,8 @@ class Sequential(Model):
                 x_train, y_train = x, y
                 x_val, y_val = None, None
 
-        self._train(x_train, y_train, x_val, y_val, epochs, batch_size)
+        history = self._train(x_train, y_train, x_val, y_val, epochs, batch_size)
+        return history
 
     def _train(self, x_train, y_train, x_val, y_val, epochs, batch_size):
         """Protected training function
@@ -128,17 +129,20 @@ class Sequential(Model):
         """
         self.optimizer.build(x_train, y_train, epochs, batch_size, self.first_layer, self.last_layer)
         self.optimizer.ForwardPropagation(x_val, y_val)
+        return self.optimizer.GetHistory()
 
     def compile(self,
                 loss=None,
                 optimizer=None,
                 learning_rate=None,
+                metrics=None,
                 **kwargs):
         """Compile function used before fit
         Args:
             loss: loss function to measure the distance between prediction of model and ground truth.
             optimizer: learning rule deciding how to update gradients. The default one is S
             learning_rate: Float. The default learning rate is 0.005.
+            metrics: metrics recorded during training and validation
 
         """
         if not optimizer:
@@ -147,7 +151,7 @@ class Sequential(Model):
             raise ValueError("loss is needed")
 
         # Optimizer
-        self.optimizer = optimizers.get(optimizer, loss=loss, learning_rate=learning_rate)
+        self.optimizer = optimizers.get(optimizer, loss=loss, learning_rate=learning_rate, metrics=metrics)
         # add Input_layer
         if hasattr(self.first_layer, "input_shape"):
             shape = self.first_layer.input_shape

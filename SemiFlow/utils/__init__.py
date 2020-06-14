@@ -5,3 +5,4 @@
 """
 
 from .data_utils import DataShuffle, split_train_val, BatchSpliter
+from .history import History

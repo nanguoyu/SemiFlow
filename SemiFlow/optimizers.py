@@ -10,16 +10,16 @@ from . import activations
 from .layer.core import Layer
 from .layer.input import InputLayer
 from .layer.core import get_prerequisite
-from .utils import BatchSpliter
+from .utils import BatchSpliter, History
 import six
-from tqdm.auto import tqdm
 
 
 class Optimizer(object):
 
-    def __init__(self, loss, learning_rate, **kwargs):
+    def __init__(self, loss, learning_rate, metrics, **kwargs):
         self.learning_rate = learning_rate
         self.loss = losses.get(loss)
+        self._history = History(metrics)
         super(Optimizer, self).__init__(**kwargs)
 
     def ForwardPropagation(self, **kwargs):
@@ -31,16 +31,23 @@ class Optimizer(object):
     def _UpdateParameters(self, **kwargs):
         raise NotImplementedError
 
+    def GetHistory(self):
+        """Record of train_loss and other metrics
+        Returns: History instance
+
+        """
+        return self._history
+
 
 class GradientDescentOptimizer(Optimizer):
 
-    def __init__(self, loss, learning_rate, **kwargs):
+    def __init__(self, loss, learning_rate, metrics, **kwargs):
         self.spliter = None
         self.epochs = None
         self.batch_size = None
         self.last_layer = None
         self.first_layer = None
-        super(GradientDescentOptimizer, self).__init__(loss, learning_rate, **kwargs)
+        super(GradientDescentOptimizer, self).__init__(loss, learning_rate, metrics, **kwargs)
 
     def build(self, x_train, y_train, epochs, batch_size, first_layer, last_layer):
         assert isinstance(first_layer, Layer)
@@ -68,6 +75,7 @@ class GradientDescentOptimizer(Optimizer):
         for j in range(self.epochs):
             print("[epoch", j, "]")
             i = 0
+            train_loss = []
             for xbatch, ybatch in self.spliter.get_batch():
                 # Forward Propagation
                 for node in postorder_nodes:
@@ -80,19 +88,13 @@ class GradientDescentOptimizer(Optimizer):
                         # self.BackwardPropagation()
                     elif isinstance(node, Layer):
                         node.ForwardPropagation()
+                train_loss.append(self.loss.output_value)
                 print("[epoch", j, "]", "\t Batch ", i, "train_loss", self.loss.output_value)
                 self._UpdateParameters()
                 i += 1
-            # Validation
-            if x_val is not None and y_val is not None:
-                for node in postorder_nodes:
-                    if isinstance(node, InputLayer):
-                        node.ForwardPropagation(feed=x_val)
-                    elif isinstance(node, losses.Loss):
-                        node.ForwardPropagation(y_true=y_val)
-                        print("val_loss", self.loss.output_value)
-                    elif isinstance(node, Layer):
-                        node.ForwardPropagation()
+            self._history.add_record('train_loss', backend.mean(train_loss))
+            # Todo I am not sure that validation is performed after update parameters
+            self._validation(x_val=x_val, y_val=y_val, postorder_nodes=postorder_nodes)
 
     def BackwardPropagation(self):
         """Back propagation implemented in recursive method
@@ -118,18 +120,33 @@ class GradientDescentOptimizer(Optimizer):
                 for param in params:
                     node.params[param] -= self.learning_rate * node.grads[param]
 
+    def _validation(self, x_val, y_val, postorder_nodes):
+        # Validation
+        if x_val is not None and y_val is not None:
+            for node in postorder_nodes:
+                if isinstance(node, InputLayer):
+                    node.ForwardPropagation(feed=x_val)
+                elif isinstance(node, losses.Loss):
+                    node.ForwardPropagation(y_true=y_val)
+                    print("val_loss", self.loss.output_value)
+                    self._history.add_record('val_loss', self.loss.output_value)
+                elif isinstance(node, Layer):
+                    node.ForwardPropagation()
 
-def get(opt, loss, learning_rate=0.005):
+
+def get(opt, loss, learning_rate=0.005, metrics=None):
+    if metrics is None:
+        metrics = ['train_loss']
     if isinstance(opt, six.string_types):
         opt = opt.lower()
         if opt == 'sgd':
-            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate)
+            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
         elif opt == 'rmsprop':
             # TODO Implement RMSprop
-            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate)
+            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
         else:
             # TODO other Optimizer
-            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate)
+            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
     else:
         ValueError('Could not interpret '
                    'initializer:', opt)
