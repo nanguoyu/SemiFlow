@@ -5,7 +5,6 @@
 """
 import numpy as np
 from SemiFlow.layer import Dense, InputLayer
-from SemiFlow.Model import Sequential
 
 
 def test_forward():

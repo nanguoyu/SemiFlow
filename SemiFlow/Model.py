@@ -111,20 +111,23 @@ class Sequential(Model):
                 x_train, y_train, x_val, y_val = split_train_val(x, y, validation_split)
             else:
                 x_train, y_train = x, y
+                x_val, y_val = None, None
 
-        self._train(x_train, y_train, epochs, batch_size)
+        self._train(x_train, y_train, x_val, y_val, epochs, batch_size)
 
-    def _train(self, x, y, epochs, batch_size):
+    def _train(self, x_train, y_train, x_val, y_val, epochs, batch_size):
         """Protected training function
         Args:
-            x: Input data in training.
-            y: Target data in training.
+            x_train: Input data in training.
+            y_train: Target data in training.
+            x_val: Input data in validation.
+            y_val: Target dat in validation.
             epochs: Number of epochs to train the model.
             batch_size: The number of a group samples per gradient update.
 
         """
-        self.optimizer.build(x, y, epochs, batch_size, self.first_layer, self.last_layer)
-        self.optimizer.ForwardPropagation()
+        self.optimizer.build(x_train, y_train, epochs, batch_size, self.first_layer, self.last_layer)
+        self.optimizer.ForwardPropagation(x_val, y_val)
 
     def compile(self,
                 loss=None,

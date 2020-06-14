@@ -19,8 +19,8 @@ def test_mlp_mnist():
     x_val, y_val = valid_set[0], valid_set[1]
 
     num_classes = 10
-    batch_size = 128
-    epochs = 10
+    batch_size = 32
+    epochs = 30
 
     model = Sequential()
     model.add(Dense(units=256, activation='relu', input_shape=(784,)))
@@ -36,7 +36,7 @@ def test_mlp_mnist():
                         batch_size=batch_size,
                         epochs=epochs,
                         verbose=1,
-                        validation_data=(None, None))
+                        validation_data=(x_val, y_val))
     score = model.evaluate(x_test, y_test, verbose=0)
 
 
@@ -49,11 +49,11 @@ def test_simple_mlp():
     print(x_train.shape, y_train.shape)
     num_classes = 2
     batch_size = 10
-    epochs = 5
+    epochs = 10
 
     model = Sequential()
     model.add(Dense(units=2, activation='relu', input_shape=(2,)))
-    model.add(Dense(units=2, activation='softmax'))
+    model.add(Dense(units=num_classes, activation='softmax'))
 
     model.summary()
 

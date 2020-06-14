@@ -12,6 +12,7 @@ from .layer.input import InputLayer
 from .layer.core import get_prerequisite
 from .utils import BatchSpliter
 import six
+from tqdm.auto import tqdm
 
 
 class Optimizer(object):
@@ -21,13 +22,13 @@ class Optimizer(object):
         self.loss = losses.get(loss)
         super(Optimizer, self).__init__(**kwargs)
 
-    def _updateParameters(self):
+    def ForwardPropagation(self, **kwargs):
         raise NotImplementedError
 
-    def ForwardPropagation(self):
+    def BackwardPropagation(self, **kwargs):
         raise NotImplementedError
 
-    def BackwardPropagation(self):
+    def _UpdateParameters(self, **kwargs):
         raise NotImplementedError
 
 
@@ -45,9 +46,6 @@ class GradientDescentOptimizer(Optimizer):
         assert isinstance(first_layer, Layer)
         assert isinstance(last_layer, Layer)
         # Called at the beginning of training
-        # Todo support validation
-        # self.x_val = x_val
-        # self.y_val = y_val
         self.spliter = BatchSpliter(x_train, y_train, batch_size=batch_size)
         self.epochs = epochs
         self.batch_size = batch_size
@@ -65,11 +63,7 @@ class GradientDescentOptimizer(Optimizer):
         assert x_train.shape[-1] == self.first_layer.shape[0], "wrong input size"
         assert y_train.shape[-1] == self.last_layer.shape[-1], "wrong output size"
 
-    def _updateParameters(self):
-        pass
-
-    def ForwardPropagation(self):
-        # TODO optimizer.GradientDescentOptimizer.ForwardPropagation
+    def ForwardPropagation(self, x_val, y_val):
         postorder_nodes = get_prerequisite(last_layer=self.loss)
         for j in range(self.epochs):
             print("[epoch", j, "]")
@@ -86,23 +80,36 @@ class GradientDescentOptimizer(Optimizer):
                         # self.BackwardPropagation()
                     elif isinstance(node, Layer):
                         node.ForwardPropagation()
-                print("Batch ", i, "loss_value", self.loss.output_value)
-                self.UpdateParameters()
+                print("[epoch", j, "]", "\t Batch ", i, "train_loss", self.loss.output_value)
+                self._UpdateParameters()
                 i += 1
+            # Validation
+            if x_val is not None and y_val is not None:
+                for node in postorder_nodes:
+                    if isinstance(node, InputLayer):
+                        node.ForwardPropagation(feed=x_val)
+                    elif isinstance(node, losses.Loss):
+                        node.ForwardPropagation(y_true=y_val)
+                        print("val_loss", self.loss.output_value)
+                    elif isinstance(node, Layer):
+                        node.ForwardPropagation()
 
     def BackwardPropagation(self):
-        # TODO finish this function and replace compute_gradients
+        """Back propagation implemented in recursive method
+
+        This method is not suggested. It's better to use compute_gradients
+        """
+
         def bp(node: Layer, grad=None):
             grad = node.BackwardPropagation(grad=grad)
             if len(node.inbound) > 0:
                 for child in node.inbound:
-                    # print(node.name, "child", child.name)
                     if not isinstance(child, InputLayer) and isinstance(child, Layer):
                         bp(child, grad)
 
         bp(self.loss)
 
-    def UpdateParameters(self):
+    def _UpdateParameters(self):
         postorder_nodes = get_prerequisite(last_layer=self.loss)
         for node in postorder_nodes:
             if len(node.inbound) > 0 and node.params:
