@@ -1,5 +1,5 @@
 numpy==1.18.5
-matplotlib==3.2.1
+matplotlib==3.2.2
 pytest~=5.4.3
 six~=1.15.0
 setuptools~=47.3.1
