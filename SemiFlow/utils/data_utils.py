@@ -30,6 +30,9 @@ class BatchSpliter(object):
 
         self._split()
 
+    def shuffle(self):
+        self.x, self.y = DataShuffle(self.x, self.y)
+
     def get_batch(self):
         n = 0
         while n < self.num_batch:

@@ -14,7 +14,7 @@ x_test, y_test = test_set[0], test_set[1]
 x_val, y_val = valid_set[0], valid_set[1]
 
 num_classes = 10
-batch_size = 64
+batch_size = 32
 epochs = 3
 
 model = Sequential()

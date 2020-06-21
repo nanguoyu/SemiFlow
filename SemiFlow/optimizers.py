@@ -76,6 +76,7 @@ class GradientDescentOptimizer(Optimizer):
             print("[epoch", j, "]")
             i = 0
             train_loss = []
+            self.spliter.shuffle()
             for xbatch, ybatch in self.spliter.get_batch():
                 # Forward Propagation
                 for node in postorder_nodes:
