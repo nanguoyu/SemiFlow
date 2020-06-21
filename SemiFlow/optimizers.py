@@ -39,7 +39,9 @@ class Optimizer(object):
         return self._history
 
 
-class GradientDescentOptimizer(Optimizer):
+class StochasticGradientDescentOptimizer(Optimizer):
+    """mini-batch gradient descent
+    """
 
     def __init__(self, loss, learning_rate, metrics, **kwargs):
         self.spliter = None
@@ -47,7 +49,7 @@ class GradientDescentOptimizer(Optimizer):
         self.batch_size = None
         self.last_layer = None
         self.first_layer = None
-        super(GradientDescentOptimizer, self).__init__(loss, learning_rate, metrics, **kwargs)
+        super(StochasticGradientDescentOptimizer, self).__init__(loss, learning_rate, metrics, **kwargs)
 
     def build(self, x_train, y_train, epochs, batch_size, first_layer, last_layer):
         assert isinstance(first_layer, Layer)
@@ -73,7 +75,7 @@ class GradientDescentOptimizer(Optimizer):
     def ForwardPropagation(self, x_val, y_val):
         postorder_nodes = get_prerequisite(last_layer=self.loss)
         for j in range(self.epochs):
-            print("[epoch", j, "]")
+            print("[epoch", j, "]", end="")
             i = 0
             train_loss = []
             self.spliter.shuffle()
@@ -90,12 +92,15 @@ class GradientDescentOptimizer(Optimizer):
                     elif isinstance(node, Layer):
                         node.ForwardPropagation()
                 train_loss.append(self.loss.output_value)
-                print("[epoch", j, "]", "\t Batch ", i, "train_loss", self.loss.output_value)
+                # print("[epoch", j, "]", "\t Batch ", i, "train_loss", self.loss.output_value)
                 self._UpdateParameters()
                 i += 1
+            print("train_loss", backend.mean(train_loss), " ", end="")
             self._history.add_record('train_loss', backend.mean(train_loss))
+            val_loss = self._validation(x_val=x_val, y_val=y_val, postorder_nodes=postorder_nodes)
+            print("val_loss", val_loss)
+            self._history.add_record('val_loss', val_loss)
             # Todo I am not sure that validation is performed after update parameters
-            self._validation(x_val=x_val, y_val=y_val, postorder_nodes=postorder_nodes)
 
     def BackwardPropagation(self):
         """Back propagation implemented in recursive method
@@ -129,8 +134,7 @@ class GradientDescentOptimizer(Optimizer):
                     node.ForwardPropagation(feed=x_val)
                 elif isinstance(node, losses.Loss):
                     node.ForwardPropagation(y_true=y_val)
-                    print("val_loss", self.loss.output_value)
-                    self._history.add_record('val_loss', self.loss.output_value)
+                    return self.loss.output_value
                 elif isinstance(node, Layer):
                     node.ForwardPropagation()
 
@@ -141,13 +145,13 @@ def get(opt, loss, learning_rate=0.005, metrics=None):
     if isinstance(opt, six.string_types):
         opt = opt.lower()
         if opt == 'sgd':
-            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
+            return StochasticGradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
         elif opt == 'rmsprop':
             # TODO Implement RMSprop
-            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
+            return StochasticGradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
         else:
             # TODO other Optimizer
-            return GradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
+            return StochasticGradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
     else:
         ValueError('Could not interpret '
                    'initializer:', opt)

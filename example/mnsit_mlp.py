@@ -38,4 +38,16 @@ history = model.fit(x_train, y_train,
                     # validation_split=0.2,
                     )
 print(history.history)
+try:
+    import matplotlib.pyplot as plt
+
+    plt.plot(history.history['train_loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('Loss over epochs')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Train loss', 'Validation loss'], loc='best')
+    plt.show()
+except Exception as e:
+    print(e)
 score = model.evaluate(x_test, y_test, verbose=0)
