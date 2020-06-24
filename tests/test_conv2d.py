@@ -7,7 +7,7 @@ from SemiFlow.utils.dataset import mnist
 from SemiFlow.layer import Dense, Conv2D, InputLayer
 from SemiFlow.Model import Sequential
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
 
 
 def test_conv2d_layer():
