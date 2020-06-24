@@ -13,7 +13,7 @@ class Conv2D(Layer):
     def __init__(self, filters,
                  kernel_size=None,
                  strides=(1, 1),
-                 padding='valid',
+                 padding='SAME',
                  activation=None,
                  use_bias=True,
                  kernel_initializer=None,
@@ -51,7 +51,10 @@ class Conv2D(Layer):
             self.strides = strides
         elif isinstance(strides, int):
             self.strides = (strides, strides)
-        self.padding = padding
+        if isinstance(padding, str):
+            self.padding = padding.lower()
+        else:
+            raise TypeError("padding is str")
         self.activation = activations.get(activation)
         self.kernel_initializer = initializers.get(kernel_initializer)
         if use_bias:
