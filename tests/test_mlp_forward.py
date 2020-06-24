@@ -1,5 +1,5 @@
 """
-@File : test_forward.py
+@File : test_mlp_forward.py
 @Author: Dong Wang
 @Date : 2020/6/13
 """
@@ -21,8 +21,8 @@ def test_forward():
     epochs = 20
 
     # Build network
-    input0 = InputLayer(shape=2)
-    dense1 = Dense(units=2, activation='relu', input_shape=(2,))
+    input0 = InputLayer(shape=[2])
+    dense1 = Dense(units=2, activation='relu', input_shape=[2])
     input0.outbound.append(dense1)
     dense1.inbound.append(input0)
 

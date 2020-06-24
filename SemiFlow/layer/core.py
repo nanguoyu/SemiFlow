@@ -29,11 +29,17 @@ class Layer(object):
         if 'input_shape' in kwargs:
             if isinstance(kwargs['input_shape'], tuple):
                 if len(kwargs['input_shape']) == 1:
-                    self.input_shape = kwargs['input_shape'][0]
+                    self.input_shape = list([kwargs['input_shape'][0]])
                 else:
-                    self.input_shape = tuple(kwargs['input_shape'])
-            else:
+                    self.input_shape = list(kwargs['input_shape'])
+            elif isinstance(kwargs['input_shape'], backend.ndarray):
                 self.input_shape = kwargs['input_shape']
+            elif isinstance(kwargs['input_shape'], int):
+                self.input_shape = list(kwargs['input_shape'])
+            elif isinstance(kwargs['input_shape'], list):
+                self.input_shape = list(kwargs['input_shape'])
+            else:
+                raise TypeError("The input_shape should be ndarray, list, tuple, int")
         if 'name' in kwargs:
             self.name = kwargs.get('name')
 

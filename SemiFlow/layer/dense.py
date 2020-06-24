@@ -96,7 +96,7 @@ class Dense(Layer):
         # print("Init ", self.name)
         output_shape = self.units
         if hasattr(self, 'input_shape'):
-            input_shape = self.input_shape
+            input_shape = self.input_shape[-1]
             self.shape = (input_shape, output_shape)
         else:
             input_shape = self.inbound[0].shape[-1]

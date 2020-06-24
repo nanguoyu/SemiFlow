@@ -20,7 +20,7 @@ def test_mlp_mnist():
 
     num_classes = 10
     batch_size = 32
-    epochs = 5
+    epochs = 3
 
     model = Sequential()
     model.add(Dense(units=256, activation='relu', input_shape=(784,)))

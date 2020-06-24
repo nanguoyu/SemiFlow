@@ -43,10 +43,18 @@ class InputLayer(Layer):
 
         """
         # TODO check feed.shape
-        if feed.shape[-1] == self.shape:
-            self.output_value = feed
+        if len(list(feed.shape)) == 1 and len(self.shape) == 1:
+            if list(feed.shape) == self.shape:
+                self.output_value = feed
+            else:
+                raise ValueError(
+                    " expect shape: ", self.shape,
+                    " but get ", list(feed.shape[0]))
         else:
-            raise ValueError(
-                " expect shape: ", self.shape,
-                " but get ", feed.shape[-1])
-        return self.output_value
+            if list(feed.shape[1:]) == self.shape:
+                self.output_value = feed
+            else:
+                raise ValueError(
+                    " expect shape: ", self.shape,
+                    " but get ", list(feed.shape[1:]))
+            return self.output_value

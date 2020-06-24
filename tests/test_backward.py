@@ -19,7 +19,7 @@ def test_backward():
     print("y", y)
     print("\n")
     # Build network
-    input0 = InputLayer(shape=2)
+    input0 = InputLayer(shape=[2])
     dense1 = Dense(units=2, activation='linear', input_shape=(2,))
     loss2 = SoftmaxCategoricalCrossentropy()
 
