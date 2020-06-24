@@ -18,7 +18,7 @@ class Layer(object):
         allowed_kwargs = {'input_shape',
                           'batch_input_shape',  # TODO Layer.init.batch_input_shape
                           'batch_size',
-                          'dtype',  # TODO Layer.init.dtype
+                          'dtype',
                           'name',
                           'trainable',  # TODO Layer.init.trainable
                           }
@@ -42,6 +42,8 @@ class Layer(object):
                 raise TypeError("The input_shape should be ndarray, list, tuple, int")
         if 'name' in kwargs:
             self.name = kwargs.get('name')
+        if 'dtype' in kwargs:
+            self.dtype = kwargs.get('dtype')
 
         # The input layer of this layer
         self.inbound = []

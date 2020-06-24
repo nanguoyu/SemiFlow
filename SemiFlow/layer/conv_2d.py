@@ -121,6 +121,8 @@ class Conv2D(Layer):
             z += b
         self.output_value = self.activation.ForwardPropagation(z)
         self.inputs_padded_shape, self.col, self.W = inputs_padded.shape, col, w
+        if hasattr(self, 'dtype'):
+            self.output_value = self.output_value.astype(self.dtype)
         return self.output_value
 
     def InitParams(self):

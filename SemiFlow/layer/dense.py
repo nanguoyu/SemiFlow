@@ -90,6 +90,8 @@ class Dense(Layer):
         logits = backend.matmul(x.output_value, w) + b
         # print("FP:", self.name+"."+self.activation.name)
         self.output_value = self.activation.ForwardPropagation(logits)
+        if hasattr(self, 'dtype'):
+            self.output_value = self.output_value.astype(self.dtype)
         return self.output_value
 
     def InitParams(self):

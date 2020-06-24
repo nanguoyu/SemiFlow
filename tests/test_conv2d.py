@@ -7,17 +7,20 @@ from SemiFlow.utils.dataset import mnist
 from SemiFlow.layer import Dense, Conv2D, InputLayer
 from SemiFlow.Model import Sequential
 import numpy as np
+
+
 # import tensorflow as tf
 
 
 def test_conv2d_layer():
     conv1 = Conv2D(32, kernel_size=(3, 3),
-                   activation='relu',
+                   activation='linear',
                    input_shape=(5, 5, 1),
-                   use_bias=True, name='conv1')
+                   use_bias=False, name='conv1',
+                   dtype='float64', )
     conv1.InitParams()
     assert conv1.shape == [3, 3, 1, 32]
-    input0 = InputLayer(shape=[5, 5, 1], name='input0')
+    input0 = InputLayer(shape=[5, 5, 1], name='input0', dtype='float64')
     input0.outbound.append(conv1)
     conv1.inbound.append(input0)
     x = np.ones([2, 5, 5, 1])
@@ -26,9 +29,7 @@ def test_conv2d_layer():
     print("inputs.shape", inputs.shape)
     c1 = conv1.ForwardPropagation()
     print("c1.shape", c1.shape)
-
-    print(20 * "=")
-    # tf.nn.conv2d(tf.constant(x, dtype=tf.float32), tf.constant(conv1.params['kernel'], dtype=tf.float32), strides=(1, 1), padding='SAME', data_format='NHWC')
+    print(c1[0, :, :, 0][0][0], c1[0, :, :, 0][0][0].dtype)
 
 
 def test_conv2d_mnist():

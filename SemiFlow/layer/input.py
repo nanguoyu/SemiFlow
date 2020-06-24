@@ -57,4 +57,6 @@ class InputLayer(Layer):
                 raise ValueError(
                     " expect shape: ", self.shape,
                     " but get ", list(feed.shape[1:]))
-            return self.output_value
+        if hasattr(self, 'dtype'):
+            self.output_value = self.output_value.astype(self.dtype)
+        return self.output_value
