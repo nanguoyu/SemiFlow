@@ -54,7 +54,7 @@ class Conv2D(Layer):
         if isinstance(padding, str):
             self.padding = padding.lower()
         else:
-            raise TypeError("padding is str")
+            raise TypeError("padding should be str")
         self.activation = activations.get(activation)
         self.kernel_initializer = initializers.get(kernel_initializer)
         if use_bias:
@@ -71,22 +71,35 @@ class Conv2D(Layer):
 
         """
         # Todo Conv2D.BP
+        k_h, k_w, in_c, out_c = self.shape
+        s_h, s_w = self.strides
+        batch_sz, in_h, in_w, in_c = self.inputs_padded_shape
+
         if grad is None:
             grad = backend.ones_like(self.output_value)
 
         grad = self.activation.BackwardPropagation(grads=grad)
+        flat_grad = grad.reshape((-1, out_c))
 
-        x, = [layer.output_value for layer in self.inbound]  # TODO support multi-inputs
-        w = self.params['kernel']
-        b = self.params['bias']
+        pad_h, pad_w = self.padding_width[1:3]
 
-        grad_wrt_w = backend.matmul(x.T, grad)
+        x_padded = self.col
+        grad_wrt_w = backend.matmul(x_padded.T, flat_grad)
+        self.grads["kernel"] = grad_wrt_w.reshape(self.shape)
+        self.grads["bias"] = backend.sum(flat_grad, axis=0)
 
-        grad_wrt_b = backend.sum(grad, axis=0)
+        W = self.W
+        grad_wrt_x_padded = backend.matmul(flat_grad, W.T)
 
-        self.grads['kernel'] = grad_wrt_w
-        self.grads['bias'] = grad_wrt_b
-        grad_wrt_x = backend.matmul(grad, w.T)
+        grad_wrt_x = backend.zeros(self.inputs_padded_shape)
+        for i, r in enumerate(range(0, in_h - k_h + 1, s_h)):
+            for j, c in enumerate(range(0, in_w - k_w + 1, s_w)):
+                patch = grad_wrt_x_padded[:, i, j, :]
+                patch = patch.reshape((batch_sz, k_h, k_w, in_c))
+                grad_wrt_x[:, r:r + k_h, c:c + k_w, :] += patch
+
+        # cut off gradients of padding
+        grad_wrt_x = grad_wrt_x[:, pad_h[0]:in_h - pad_h[1], pad_w[0]:in_w - pad_w[1], :]
         return grad_wrt_x
 
     def ForwardPropagation(self):
@@ -100,11 +113,10 @@ class Conv2D(Layer):
         Returns:output
 
         """
-        # Todo Conv2D.FP
         x = self.inbound[0]
         inputs = x.output_value
         kernel = self.params['kernel']
-        inputs_padded = padding(inputs, kernel_shape=kernel.shape, padding_mode=self.padding)
+        inputs_padded, self.padding_width = padding(inputs, kernel_shape=kernel.shape, padding_mode=self.padding)
         # convolution => im2col
         # implementation：https://zhuanlan.zhihu.com/p/63974249
         col = im2col(inputs_padded, self.shape[0], self.shape[1], self.strides[0], self.strides[1])
@@ -169,7 +181,7 @@ def padding(inputs, kernel_shape, padding_mode='same'):
     w_pad = get_padding_1d(kernel_shape[1], mode=padding_mode)
 
     padding_width = (0, 0), h_pad, w_pad, (0, 0)
-    return backend.pad(inputs, pad_width=padding_width, mode="constant")
+    return backend.pad(inputs, pad_width=padding_width, mode="constant"), padding_width
 
 
 def im2col(img, k_h, k_w, s_h, s_w):
@@ -187,7 +199,6 @@ def im2col(img, k_h, k_w, s_h, s_w):
     Returns: column matrix of shape (B*out_h*out_w, k_h*k_h*inc)
 
     """
-    # Todo: Rewrite im2col
     batch_sz, h, w, in_c = img.shape
     # calculate result feature map size
     out_h = (h - k_h) // s_h + 1

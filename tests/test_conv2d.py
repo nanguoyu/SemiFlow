@@ -19,17 +19,16 @@ def test_conv2d_layer():
                    use_bias=False, name='conv1',
                    dtype='float64', )
     conv1.InitParams()
-    assert conv1.shape == [3, 3, 1, 32]
+    assert list(conv1.shape) == [3, 3, 1, 32]
     input0 = InputLayer(shape=[5, 5, 1], name='input0', dtype='float64')
     input0.outbound.append(conv1)
     conv1.inbound.append(input0)
     x = np.ones([2, 5, 5, 1])
     inputs = input0.ForwardPropagation(feed=x)
     print("\n")
-    print("inputs.shape", inputs.shape)
+    assert list(inputs.shape) == [2, 5, 5, 1]
     c1 = conv1.ForwardPropagation()
-    print("c1.shape", c1.shape)
-    print(c1[0, :, :, 0][0][0], c1[0, :, :, 0][0][0].dtype)
+    assert list(c1.shape) == [2, 5, 5, 32]
 
 
 def test_conv2d_mnist():
