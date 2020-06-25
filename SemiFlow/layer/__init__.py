@@ -6,4 +6,4 @@
 from .core import Layer
 from .dense import Dense
 from .input import InputLayer
-from .conv_2d import Conv2D
+from .convolutional import Conv2D

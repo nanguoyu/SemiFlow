@@ -1,5 +1,5 @@
 """
-@File : conv_2d.py
+@File : convolutional.py
 @Author: Dong Wang
 @Date : 2020/6/21
 """
@@ -51,6 +51,7 @@ class Conv2D(Layer):
             self.strides = strides
         elif isinstance(strides, int):
             self.strides = (strides, strides)
+        # padding
         if isinstance(padding, str):
             self.padding = padding.lower()
         else:
