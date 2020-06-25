@@ -8,3 +8,4 @@ from .dense import Dense
 from .input import InputLayer
 from .convolutional import Conv2D
 from .pooling import MaxPooling2D
+from .reshape import Flatten

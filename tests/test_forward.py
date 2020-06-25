@@ -4,7 +4,7 @@
 @Date : 2020/6/13
 """
 import numpy as np
-from SemiFlow.layer import Dense, Conv2D, InputLayer, MaxPooling2D
+from SemiFlow.layer import Dense, Conv2D, InputLayer, MaxPooling2D, Flatten
 
 
 def test_mlp_forward():
@@ -87,3 +87,19 @@ def test_maxpooling_2d_forward():
     assert check1[0, 1] == 100
     assert check1[1, 0] == 100
     assert check1[1, 1] == 100
+
+
+def test_flatten_forward():
+    flatten = Flatten(name='flatten')
+    input0 = InputLayer(shape=[3, 2], name='input0', dtype='float32')
+    input0.outbound.append(flatten)
+    flatten.inbound.append(input0)
+    x = np.array([[[1, 1], [2, 2], [4, 4]], [[3, 3], [5, 5], [6, 6]]])
+    i1 = input0.ForwardPropagation(feed=x)
+    f1 = flatten.ForwardPropagation()
+    assert np.all(f1[0] == np.array([1, 1, 2, 2, 4, 4.], dtype='float32'))
+    assert np.all(f1[1] == np.array([3, 3, 5, 5, 6, 6.], dtype='float32'))
+
+    grad = flatten.BackwardPropagation()
+    print("\n")
+    assert grad.shape[1:] == (3, 2)

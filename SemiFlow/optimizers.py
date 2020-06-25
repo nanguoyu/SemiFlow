@@ -122,6 +122,8 @@ class StochasticGradientDescentOptimizer(Optimizer):
         for node in postorder_nodes:
             if len(node.inbound) > 0 and node.params:
                 # print("Update: ", node.name)
+                if not hasattr(node, 'params'):
+                    continue
                 params = node.params.keys()
                 for param in params:
                     node.params[param] -= self.learning_rate * node.grads[param]

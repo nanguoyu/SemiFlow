@@ -4,7 +4,7 @@
 @Date : 2020/6/13
 """
 import numpy as np
-from SemiFlow.layer import Dense, InputLayer, Conv2D, MaxPooling2D
+from SemiFlow.layer import Dense, InputLayer, Conv2D, MaxPooling2D, Flatten
 from SemiFlow.losses import SoftmaxCategoricalCrossentropy, softmax_categorical_crossentropy
 
 
@@ -110,3 +110,15 @@ def test_maxpooling_2d_backward():
     assert list(grad_wrt_x.shape) == [2, 5, 5, 2]
     # Todo Check the value
     print(grad_wrt_x[0, :, :, 0])
+
+
+def test_flatten_forward():
+    flatten = Flatten(name='flatten')
+    input0 = InputLayer(shape=[3, 2], name='input0', dtype='float32')
+    input0.outbound.append(flatten)
+    flatten.inbound.append(input0)
+    x = np.array([[[1, 1], [2, 2], [4, 4]], [[3, 3], [5, 5], [6, 6]]])
+    i1 = input0.ForwardPropagation(feed=x)
+    f1 = flatten.ForwardPropagation()
+    grad = flatten.BackwardPropagation()
+    assert grad.shape[1:] == (3, 2)
