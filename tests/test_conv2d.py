@@ -9,28 +9,6 @@ from SemiFlow.Model import Sequential
 import numpy as np
 
 
-# import tensorflow as tf
-
-
-def test_conv2d_layer():
-    conv1 = Conv2D(32, kernel_size=(3, 3),
-                   activation='linear',
-                   input_shape=(5, 5, 1),
-                   use_bias=False, name='conv1',
-                   dtype='float64', )
-    conv1.InitParams()
-    assert list(conv1.shape) == [3, 3, 1, 32]
-    input0 = InputLayer(shape=[5, 5, 1], name='input0', dtype='float64')
-    input0.outbound.append(conv1)
-    conv1.inbound.append(input0)
-    x = np.ones([2, 5, 5, 1])
-    inputs = input0.ForwardPropagation(feed=x)
-    print("\n")
-    assert list(inputs.shape) == [2, 5, 5, 1]
-    c1 = conv1.ForwardPropagation()
-    assert list(c1.shape) == [2, 5, 5, 32]
-
-
 def test_conv2d_mnist():
     train_set, valid_set, test_set = mnist(one_hot=True)
 

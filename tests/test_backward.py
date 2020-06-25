@@ -4,11 +4,11 @@
 @Date : 2020/6/13
 """
 import numpy as np
-from SemiFlow.layer import Dense, InputLayer
+from SemiFlow.layer import Dense, InputLayer, Conv2D
 from SemiFlow.losses import SoftmaxCategoricalCrossentropy, softmax_categorical_crossentropy
 
 
-def test_backward():
+def test_mlp_backward():
     print("\n")
     print("\n")
     x = np.array([[1, 0], [1, 1], [0, 1]])
@@ -58,3 +58,24 @@ def test_backward():
     print("grad_loss", grad_loss)
     grad_dense = dense1.BackwardPropagation(grad=grad_loss)
     print("grad_dense", grad_dense)
+
+
+def test_conv2d_backward():
+    conv1 = Conv2D(32, kernel_size=(3, 3),
+                   activation='linear',
+                   input_shape=(5, 5, 1),
+                   use_bias=False, name='conv1',
+                   dtype='float64', )
+    conv1.InitParams()
+    assert list(conv1.shape) == [3, 3, 1, 32]
+    input0 = InputLayer(shape=[5, 5, 1], name='input0', dtype='float64')
+    input0.outbound.append(conv1)
+    conv1.inbound.append(input0)
+    x = np.ones([2, 5, 5, 1])
+    inputs = input0.ForwardPropagation(feed=x)
+    print("\n")
+    assert list(inputs.shape) == [2, 5, 5, 1]
+    c1 = conv1.ForwardPropagation()
+    assert list(c1.shape) == [2, 5, 5, 32]
+    grad_wrt_x = conv1.BackwardPropagation()
+    assert list(grad_wrt_x.shape) == [2, 5, 5, 1]

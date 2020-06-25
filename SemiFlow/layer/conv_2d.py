@@ -70,7 +70,6 @@ class Conv2D(Layer):
         Returns: gradients of this layer
 
         """
-        # Todo Conv2D.BP
         k_h, k_w, in_c, out_c = self.shape
         s_h, s_w = self.strides
         batch_sz, in_h, in_w, in_c = self.inputs_padded_shape
@@ -89,8 +88,7 @@ class Conv2D(Layer):
         self.grads["bias"] = backend.sum(flat_grad, axis=0)
 
         W = self.W
-        grad_wrt_x_padded = backend.matmul(flat_grad, W.T)
-
+        grad_wrt_x_padded = backend.matmul(grad, W.T)
         grad_wrt_x = backend.zeros(self.inputs_padded_shape)
         for i, r in enumerate(range(0, in_h - k_h + 1, s_h)):
             for j, c in enumerate(range(0, in_w - k_w + 1, s_w)):
