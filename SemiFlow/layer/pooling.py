@@ -69,7 +69,7 @@ class MaxPooling2D(Layer):
         output_w = (padded_w - self.pooling_size[1]) // self.strides[1] + 1
 
         output_value = backend.zeros(shape=(batch_size, output_h, output_w, input_channel))
-        argmax = backend.empty(shape=(batch_size, output_h, output_w, input_channel), dtype=1)
+        argmax = backend.empty(shape=(batch_size, output_h, output_w, input_channel), dtype=int)
         for r in range(output_h):
             r_start = r * self.strides[0]
             for c in range(output_w):
