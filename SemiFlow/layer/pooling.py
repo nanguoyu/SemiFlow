@@ -79,6 +79,7 @@ class MaxPooling2D(Layer):
                 # Todo I dont understand why compute argmax. Is it about back-propagation?
                 pool = pool.reshape((batch_size, -1, input_channel))
                 _argmax = backend.argmax(pool, axis=1)[:, backend.newaxis, :]
+                # Todo It may fail when input_channel = 1
                 argmax[:, r, c, :] = _argmax.squeeze()
 
                 _max_pool = backend.take_along_axis(pool, _argmax, axis=1).squeeze()

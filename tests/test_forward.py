@@ -4,7 +4,7 @@
 @Date : 2020/6/13
 """
 import numpy as np
-from SemiFlow.layer import Dense, Conv2D, InputLayer
+from SemiFlow.layer import Dense, Conv2D, InputLayer, MaxPooling2D
 
 
 def test_mlp_forward():
@@ -62,3 +62,21 @@ def test_conv2d_forward():
     assert list(inputs.shape) == [2, 5, 5, 1]
     c1 = conv1.ForwardPropagation()
     assert list(c1.shape) == [2, 5, 5, 32]
+
+
+def test_maxpooling_2d_forward():
+    Pooling1 = MaxPooling2D(pooling_size=(3, 3),
+                            padding='SAME',
+                            input_shape=(5, 5, 2),
+                            name='conv1',
+                            dtype='float32')
+
+    input0 = InputLayer(shape=[5, 5, 2], name='input0', dtype='float32')
+    input0.outbound.append(Pooling1)
+    Pooling1.inbound.append(input0)
+    x = np.ones([2, 5, 5, 2])
+    inputs = input0.ForwardPropagation(feed=x)
+    print("\n")
+    print("inputs.shape", inputs.shape)
+    c1 = Pooling1.ForwardPropagation()
+    print("c1.shape", c1.shape)
