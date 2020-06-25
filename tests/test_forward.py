@@ -75,8 +75,15 @@ def test_maxpooling_2d_forward():
     input0.outbound.append(Pooling1)
     Pooling1.inbound.append(input0)
     x = np.ones([2, 5, 5, 2])
+    x[0, :, :, 0][0][0] = 100
     inputs = input0.ForwardPropagation(feed=x)
     print("\n")
     print("inputs.shape", inputs.shape)
     c1 = Pooling1.ForwardPropagation()
     print("c1.shape", c1.shape)
+    assert inputs.shape == c1.shape
+    check1 = c1[0, :, :, 0]
+    assert check1[0, 0] == 100
+    assert check1[0, 1] == 100
+    assert check1[1, 0] == 100
+    assert check1[1, 1] == 100
