@@ -4,7 +4,7 @@
 @Date : 2020/6/13
 """
 import numpy as np
-from SemiFlow.layer import Dense, InputLayer, Conv2D
+from SemiFlow.layer import Dense, InputLayer, Conv2D, MaxPooling2D
 from SemiFlow.losses import SoftmaxCategoricalCrossentropy, softmax_categorical_crossentropy
 
 
@@ -78,4 +78,35 @@ def test_conv2d_backward():
     c1 = conv1.ForwardPropagation()
     assert list(c1.shape) == [2, 5, 5, 32]
     grad_wrt_x = conv1.BackwardPropagation()
+    # Todo check the value
     assert list(grad_wrt_x.shape) == [2, 5, 5, 1]
+
+
+def test_maxpooling_2d_backward():
+    Pooling1 = MaxPooling2D(pooling_size=(3, 3),
+                            padding='SAME',
+                            input_shape=(5, 5, 2),
+                            name='conv1',
+                            dtype='float32')
+
+    input0 = InputLayer(shape=[5, 5, 2], name='input0', dtype='float32')
+    input0.outbound.append(Pooling1)
+    Pooling1.inbound.append(input0)
+    x = np.ones([2, 5, 5, 2])
+    x[0, :, :, 0][0][0] = 100
+    inputs = input0.ForwardPropagation(feed=x)
+    print("\n")
+    print("inputs.shape", inputs.shape)
+    c1 = Pooling1.ForwardPropagation()
+    print("c1.shape", c1.shape)
+    assert inputs.shape == c1.shape
+    check1 = c1[0, :, :, 0]
+    assert check1[0, 0] == 100
+    assert check1[0, 1] == 100
+    assert check1[1, 0] == 100
+    assert check1[1, 1] == 100
+    grad_wrt_x = Pooling1.BackwardPropagation()
+    print("grad.shape", grad_wrt_x.shape)
+    assert list(grad_wrt_x.shape) == [2, 5, 5, 2]
+    # Todo Check the value
+    print(grad_wrt_x[0, :, :, 0])
