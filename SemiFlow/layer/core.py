@@ -44,6 +44,8 @@ class Layer(object):
             self.name = kwargs.get('name')
         if 'dtype' in kwargs:
             self.dtype = kwargs.get('dtype')
+        else:
+            self.dtype = 'float32'
 
         # The input layer of this layer
         self.inbound = []

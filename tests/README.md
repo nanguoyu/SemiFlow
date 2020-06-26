@@ -8,3 +8,9 @@ The tests for SemiFlow are in this directory.
  - [x] test_mlp.py
  - [x] test_losses.py
  - [x] test_initializers.py
+ - [x] test_cnn.py
+ - [x] test_dataset.py
+ - [x] test_backward.py
+ - [x] test_forward.py
+ - [x] test_data_utils.py
+ - [x] test_conv2d.py

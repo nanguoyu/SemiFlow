@@ -5,11 +5,13 @@
 """
 from ..engine.core import backend
 from .core import Layer
+from . import Conv2D, InputLayer
 
 
 # Todo MaxPooling2D layer
 
 class MaxPooling2D(Layer):
+
     def __init__(self,
                  pooling_size=None,
                  strides=(1, 1),
@@ -45,6 +47,8 @@ class MaxPooling2D(Layer):
             self.padding = padding.lower()
         else:
             raise TypeError("padding should be str")
+        self.padding_width = None
+        self.output_shape = None
         self.isInitialized = True
 
     def ForwardPropagation(self):
@@ -60,19 +64,15 @@ class MaxPooling2D(Layer):
         """
         x = self.inbound[0]
         inputs = x.output_value
-        inputs_padded, self.padding_width = padding(inputs,
-                                                    kernel_shape=self.pooling_size,
-                                                    padding_mode=self.padding)
-        padded_h, padded_w = inputs_padded.shape[1:3]
-        batch_size, input_h, input_w, input_channel = inputs.shape
-        output_h = (padded_h - self.pooling_size[0]) // self.strides[0] + 1
-        output_w = (padded_w - self.pooling_size[1]) // self.strides[1] + 1
+        inputs_padded = backend.pad(inputs, pad_width=self.padding_width, mode="constant")
 
-        output_value = backend.zeros(shape=(batch_size, output_h, output_w, input_channel))
-        argmax = backend.empty(shape=(batch_size, output_h, output_w, input_channel), dtype=int)
-        for r in range(output_h):
+        batch_size, input_h, input_w, input_channel = inputs.shape
+        out_h, out_w, out_c = self.output_shape
+        output_value = backend.zeros(shape=(batch_size, out_h, out_w, out_c))
+        argmax = backend.empty(shape=(batch_size, out_h, out_w, out_c), dtype=int)
+        for r in range(out_h):
             r_start = r * self.strides[0]
-            for c in range(output_w):
+            for c in range(out_w):
                 c_start = c * self.strides[1]
                 pool = inputs_padded[:, r_start:r_start + self.pooling_size[0], c_start:c_start + self.pooling_size[1],
                        :]
@@ -124,8 +124,33 @@ class MaxPooling2D(Layer):
         grad_wrt_x = grad_wrt_x[:, pad_h[0]:in_h - pad_h[1], pad_w[0]:in_w - pad_w[1], :]
         return grad_wrt_x
 
+    def InitParams(self):
+        x = self.inbound[0]
+        self.padding_width = padding(kernel_shape=self.pooling_size,
+                                     padding_mode=self.padding)
+        h_pad, w_pad = self.padding_width[1:3]
+        if hasattr(self, 'input_shape'):
+            input_channel = self.input_shape[-1]
+            in_h, in_w = self.input_shape[0:2]
+        else:
+            # when x in {InputLayer, MaxPooling, Conv2D}
+            in_h, in_w, input_channel = x.output_shape
+        output_channel = input_channel
+        shape = list(self.pooling_size)
+        shape.append(input_channel)
+        shape.append(output_channel)
+        self.shape = shape
 
-def padding(inputs, kernel_shape, padding_mode='same'):
+        in_h = in_h + h_pad[0] + h_pad[1]
+        in_w = in_w + w_pad[0] + w_pad[1]
+        out_h = (in_h - self.shape[0]) // self.strides[0] + 1
+        out_w = (in_w - self.shape[1]) // self.strides[1] + 1
+
+        self.output_shape = (out_h, out_w, output_channel)
+        self.isInitialized = True
+
+
+def padding(kernel_shape, padding_mode='same'):
     # Calculating how many pixels should we add to the inputs
     def get_padding_1d(k, mode):
         if mode == 'same':
@@ -141,4 +166,4 @@ def padding(inputs, kernel_shape, padding_mode='same'):
     w_pad = get_padding_1d(kernel_shape[1], mode=padding_mode)
 
     padding_width = (0, 0), h_pad, w_pad, (0, 0)
-    return backend.pad(inputs, pad_width=padding_width, mode="constant"), padding_width
+    return padding_width

@@ -47,21 +47,23 @@ def test_mlp_forward():
 
 def test_conv2d_forward():
     conv1 = Conv2D(32, kernel_size=(3, 3),
+                   strides=1,
                    activation='linear',
                    input_shape=(5, 5, 1),
                    use_bias=False, name='conv1',
                    dtype='float64', )
-    conv1.InitParams()
-    assert list(conv1.shape) == [3, 3, 1, 32]
     input0 = InputLayer(shape=[5, 5, 1], name='input0', dtype='float64')
     input0.outbound.append(conv1)
     conv1.inbound.append(input0)
+    conv1.InitParams()
+    assert list(conv1.shape) == [3, 3, 1, 32]
     x = np.ones([2, 5, 5, 1])
     inputs = input0.ForwardPropagation(feed=x)
     print("\n")
     assert list(inputs.shape) == [2, 5, 5, 1]
     c1 = conv1.ForwardPropagation()
     assert list(c1.shape) == [2, 5, 5, 32]
+    assert np.all(c1.shape[1:] == conv1.output_shape)
 
 
 def test_maxpooling_2d_forward():
@@ -74,6 +76,7 @@ def test_maxpooling_2d_forward():
     input0 = InputLayer(shape=[5, 5, 2], name='input0', dtype='float32')
     input0.outbound.append(Pooling1)
     Pooling1.inbound.append(input0)
+    Pooling1.InitParams()
     x = np.ones([2, 5, 5, 2])
     x[0, :, :, 0][0][0] = 100
     inputs = input0.ForwardPropagation(feed=x)
@@ -94,6 +97,7 @@ def test_flatten_forward():
     input0 = InputLayer(shape=[3, 2], name='input0', dtype='float32')
     input0.outbound.append(flatten)
     flatten.inbound.append(input0)
+    flatten.InitParams()
     x = np.array([[[1, 1], [2, 2], [4, 4]], [[3, 3], [5, 5], [6, 6]]])
     i1 = input0.ForwardPropagation(feed=x)
     f1 = flatten.ForwardPropagation()

@@ -19,6 +19,8 @@ pip install .
 ```
 
 ### Quick start
+
+#### MNIST_MLP
 > A classification model trained in MNIST.
 
 ``` Python 
@@ -70,6 +72,73 @@ score = model.evaluate(x_test, y_test, verbose=0)
 
 ```
 
+#### MNIST_CNN
+``` Python 
+# Import SemiFlow
+
+from SemiFlow.layer import Dense
+from SemiFlow.Model import Sequential
+from SemiFlow.utils.dataset import mnist
+import numpy as np
+
+# Prepare MNIST data.
+train_set, valid_set, test_set = mnist(one_hot=True)
+
+x_train, y_train = train_set[0], train_set[1]
+x_test, y_test = test_set[0], test_set[1]
+x_val, y_val = valid_set[0], valid_set[1]
+
+# Resize to height * width * channel
+x_train = x_train.reshape((-1, 28, 28, 1))
+
+x_test = x_test.reshape((-1, 28, 28, 1))
+
+x_val = x_val.reshape((-1, 28, 28, 1))
+
+# Specify trainig setting
+
+num_classes = 10
+batch_size = 128
+epochs = 10
+
+# Init a sequential model
+model = Sequential()
+
+# Add the first layer and specify the input shape
+model.add(Conv2D(32, kernel_size=(3, 3),
+                 activation='relu',
+                 input_shape=(28, 28, 1),
+                 dtype='float32'))
+# Add other Conv2D layer
+model.add(Conv2D(64, (3, 3), activation='relu'))
+# Add a MaxPooling2D layer
+model.add(MaxPooling2D(pooling_size=(3, 3)))
+# Add a Flatten layer
+model.add(Flatten())
+# Add a Dense layer
+model.add(Dense(units=64, activation='relu'))
+# Add another Dense layer as output layer
+model.add(Dense(num_classes, activation='softmax'))
+
+# Pring model structure
+model.summary()
+
+# Compile model and specify optimizer and loss function
+model.compile(loss='categorical_crossentropy', optimizer='RMSprop', learning_rate=0.05)
+
+# Train model
+history = model.fit(x_train, y_train,
+                batch_size=batch_size,
+                epochs=epochs,
+                verbose=1,
+                validation_data=(None, None))
+                
+# Evaluate model in test data 
+score = model.evaluate(x_test, y_test, verbose=0)
+
+```
+
+
 
 
 ### Features
@@ -87,11 +156,13 @@ score = model.evaluate(x_test, y_test, verbose=0)
     - [x] bce
     - [x] ce
 - [ ] Complex Layer
-    - [ ] Convolutional layer
-    - [ ] Pooling layer
-    - [ ] Stochastic gradient descent
+    - [x] Conv2D layer
+    - [x] MaxPooling2D layer
+    - [x] Flatten layer
+- [x] Stochastic gradient descent
 - [ ] Big dataset support
     - [x] Train MNIST
+    - [ ] cifar10
 - [ ] CUDA support
 - [ ] Examples and other docs
 

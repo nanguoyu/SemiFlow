@@ -69,8 +69,8 @@ class StochasticGradientDescentOptimizer(Optimizer):
         self.loss.inbound.append(self.last_layer)
         last_layer.outbound.append(self.loss)
         # Check data shape
-        assert x_train.shape[-1] == self.first_layer.shape[0], "wrong input size"
-        assert y_train.shape[-1] == self.last_layer.shape[-1], "wrong output size"
+        # assert x_train.shape[-1] == self.first_layer.shape[0], "wrong input size"
+        # assert y_train.shape[-1] == self.last_layer.shape[-1], "wrong output size"
 
     def ForwardPropagation(self, x_val, y_val):
         postorder_nodes = get_prerequisite(last_layer=self.loss)

@@ -60,6 +60,8 @@ class Conv2D(Layer):
         self.kernel_initializer = initializers.get(kernel_initializer)
         if use_bias:
             self.bias_initializer = initializers.get(bias_initializer)
+        self.padding_width = None
+        self.output_shape = None
         self.isInitialized = False
 
     def BackwardPropagation(self, grad=None):
@@ -90,7 +92,7 @@ class Conv2D(Layer):
 
         W = self.W
         grad_wrt_x_padded = backend.matmul(grad, W.T)
-        grad_wrt_x = backend.zeros(self.inputs_padded_shape)
+        grad_wrt_x = backend.zeros(self.inputs_padded_shape, dtype=self.dtype)
         for i, r in enumerate(range(0, in_h - k_h + 1, s_h)):
             for j, c in enumerate(range(0, in_w - k_w + 1, s_w)):
                 patch = grad_wrt_x_padded[:, i, j, :]
@@ -115,17 +117,18 @@ class Conv2D(Layer):
         x = self.inbound[0]
         inputs = x.output_value
         kernel = self.params['kernel']
-        inputs_padded, self.padding_width = padding(inputs, kernel_shape=kernel.shape, padding_mode=self.padding)
+        inputs_padded = backend.pad(inputs, pad_width=self.padding_width, mode="constant")
+        batch_sz, in_h, in_w, _ = inputs_padded.shape
+        out_h, out_w, out_c = self.output_shape
+
         # convolution => im2col
         # implementation：https://zhuanlan.zhihu.com/p/63974249
-        col = im2col(inputs_padded, self.shape[0], self.shape[1], self.strides[0], self.strides[1])
+        col = im2col(inputs_padded, self.shape[0], self.shape[1], self.strides[0], self.strides[1], dtype=self.dtype)
         w = kernel.reshape(-1, kernel.shape[-1])
         z = backend.matmul(col, w)
+
         # reshape output
-        batch_sz, in_h, in_w, _ = inputs_padded.shape
         z = z.reshape(batch_sz, z.shape[0] // batch_sz, self.shape[-1])
-        out_h = (in_h - self.shape[0]) // self.strides[0] + 1
-        out_w = (in_w - self.shape[1]) // self.strides[1] + 1
         z = z.reshape(batch_sz, out_h, out_w, self.shape[-1])
         if hasattr(self, 'bias_initializer'):
             b = self.params['bias']
@@ -138,17 +141,32 @@ class Conv2D(Layer):
 
     def InitParams(self):
         # print("Init ", self.name)
-        # self.shape = (filter * filter * input_channel * output_channel)
+        # self.shape = (filter , filter , input_channel , output_channel)
+        x = self.inbound[0]
+        # assert isinstance(x, InputLayer) or isinstance(x, MaxPooling2D) or isinstance(x, Conv2D), x.name + "should
+        # not " \ "be followed" \ " by " + self.name
+
+        self.padding_width = padding(kernel_shape=self.kernel_size,
+                                     padding_mode=self.padding)
+        h_pad, w_pad = self.padding_width[1:3]
         output_channel = self.filters
         if hasattr(self, 'input_shape'):
             input_channel = self.input_shape[-1]  # For a Conv2D layer as the first layer.
+            in_h, in_w = self.input_shape[0:2]
         else:
-            input_channel = self.inbound[0].shape[-1]  # For other Conv2D layers
-
+            # when x in {InputLayer, MaxPooling, Conv2D}
+            in_h, in_w, input_channel = x.output_shape
+        # kernel shape
         shape = list(self.kernel_size)
         shape.append(input_channel)
         shape.append(output_channel)
         self.shape = shape
+        # output_shape
+        in_h = in_h + h_pad[0] + h_pad[1]
+        in_w = in_w + w_pad[0] + w_pad[1]
+        out_h = (in_h - self.shape[0]) // self.strides[0] + 1
+        out_w = (in_w - self.shape[1]) // self.strides[1] + 1
+        self.output_shape = (out_h, out_w, output_channel)
         # print(self.name+'.InitParams', self.shape)
 
         kernel = self.kernel_initializer(shape=self.shape)
@@ -164,7 +182,7 @@ class Conv2D(Layer):
         self.isInitialized = True
 
 
-def padding(inputs, kernel_shape, padding_mode='same'):
+def padding(kernel_shape, padding_mode='same'):
     # Calculating how many pixels should we add to the inputs
     def get_padding_1d(k, mode):
         if mode == 'same':
@@ -180,10 +198,10 @@ def padding(inputs, kernel_shape, padding_mode='same'):
     w_pad = get_padding_1d(kernel_shape[1], mode=padding_mode)
 
     padding_width = (0, 0), h_pad, w_pad, (0, 0)
-    return backend.pad(inputs, pad_width=padding_width, mode="constant"), padding_width
+    return padding_width
 
 
-def im2col(img, k_h, k_w, s_h, s_w):
+def im2col(img, k_h, k_w, s_h, s_w, dtype='float32'):
     """Transform padded image into column matrix.
     This function is forked from https://github.com/borgwang/tinynn/blob/58c1e76e90a4ff1ee671707595df9fbc1f84f963/
     tinynn/core/layer.py#L628
@@ -194,6 +212,7 @@ def im2col(img, k_h, k_w, s_h, s_w):
         k_w: kernel width
         s_h: stride height
         s_w: stride width
+        dtype: data type
 
     Returns: column matrix of shape (B*out_h*out_w, k_h*k_h*inc)
 
@@ -203,7 +222,7 @@ def im2col(img, k_h, k_w, s_h, s_w):
     out_h = (h - k_h) // s_h + 1
     out_w = (w - k_w) // s_w + 1
     # allocate space for column matrix
-    col = backend.empty((batch_sz * out_h * out_w, k_h * k_w * in_c))
+    col = backend.empty((batch_sz * out_h * out_w, k_h * k_w * in_c), dtype=dtype)
     # fill in the column matrix
     batch_span = out_w * out_h
     for r in range(out_h):
