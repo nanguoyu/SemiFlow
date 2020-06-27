@@ -16,8 +16,16 @@ install:
 
 script:
   - pytest
+  - coverage run -p ./tests/test_activations.py
+  - coverage run -p ./tests/test_backward.py
+  - coverage run -p ./tests/test_conv2d.py
+  - coverage run -p ./tests/test_data_utils.py
+  - coverage run -p ./tests/test_dataset.py
   - coverage run -p ./tests/test_engine_compute_gradients.py
   - coverage run -p ./tests/test_engine_feedforward.py
+  - coverage run -p ./tests/test_forward.py
+  - coverage run -p ./tests/test_initializers.py
+  - coverage run -p ./tests/test_losses.py
   - coverage run -p ./tests/test_mlp.py
   - coverage combine
 
