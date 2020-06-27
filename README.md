@@ -187,7 +187,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
  - [[SemiFlow 动手实现深度学习框架 00] 初步的计划](https://www.nanguoyu.com/semiflow-00)
     - Code: [A naive dense layer in a python file](./A%20naive%20example)
  - [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
-
+ - [[SemiFlow 动手实现深度学习框架 02] 设计神经网络组件](https://www.nanguoyu.com/semiflow-02)
 
 ## Reference
 - [The Supervised Machine Learning book(An upcoming textbook)](http://smlbook.org/)
