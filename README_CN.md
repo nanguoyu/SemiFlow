@@ -186,7 +186,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
 - [x] Auto differentiate
 - [ ] <del>Tensor support</del>
 
-### Blogs
+## Blogs
  - [[SemiFlow 动手实现深度学习框架 00] 初步的计划](https://www.nanguoyu.com/semiflow-00)
     - Code: [A naive dense layer in a python file](./A%20naive%20example)
  - [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
