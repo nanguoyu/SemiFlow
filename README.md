@@ -98,10 +98,10 @@ score = model.evaluate(x_test, y_test, verbose=0)
 
 ## Other
 
-> There is a independent part in [A computation graph part](SemiFlow/engine). In this part, we develop
+> There is an independent part in [A computation graph part](SemiFlow/engine). In this part, we develop
 > a deep learning engine like Tensorflow. It also supports auto-differentiation and computation graph. There is
->an example to regress a line in [Regression a line](tests/test_engine_compute_gradients.py). 
->This part is dated and will not be updated. We are going to introduce a new model class like computation
+>an example for [Regression a line](tests/test_engine_compute_gradients.py). 
+>This part is dated and will not be updated. We are going to introduce a sub-class of **Model** containing computation
 >graph in the future.
 
 ### Features
@@ -112,7 +112,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
 - [x] Auto differentiate
 - [ ] <del>Tensor support</del>
 
-### Blogs
+## Blogs
  - [[SemiFlow 动手实现深度学习框架 00] 初步的计划](https://www.nanguoyu.com/semiflow-00)
     - Code: [A naive dense layer in a python file](./A%20naive%20example)
  - [[SemiFlow 动手实现深度学习框架 01] 从一个例子开始](https://www.nanguoyu.com/semiflow-01)
