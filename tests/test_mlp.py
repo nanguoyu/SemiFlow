@@ -20,7 +20,7 @@ def test_mlp_mnist():
 
     num_classes = 10
     batch_size = 32
-    epochs = 3
+    epochs = 1
 
     model = Sequential()
     model.add(Dense(units=256, activation='relu', input_shape=(784,)))
@@ -30,7 +30,7 @@ def test_mlp_mnist():
 
     model.summary()
 
-    model.compile(loss='categorical_crossentropy', optimizer='RMSprop', learning_rate=0.05)
+    model.compile(loss='categorical_crossentropy', optimizer='momentum', learning_rate=0.05)
 
     history = model.fit(x_train, y_train,
                         batch_size=batch_size,
@@ -57,7 +57,7 @@ def test_simple_mlp():
 
     model.summary()
 
-    model.compile(loss='categorical_crossentropy', optimizer='RMSprop', learning_rate=0.05)
+    model.compile(loss='categorical_crossentropy', optimizer='sgd', learning_rate=0.05)
 
     history = model.fit(x_train, y_train,
                         batch_size=batch_size,
@@ -71,11 +71,11 @@ def test_single_layer():
     Bsamples = np.random.multivariate_normal([1, 1], [[1, 0], [0, 1]], 200)
     Csamples = np.random.multivariate_normal([12, 12], [[1, 0], [0, 1]], 200)
 
-    plt.figure()
-    plt.plot(Asamples[:, 0], Asamples[:, 1], 'r.')
-    plt.plot(Bsamples[:, 0], Bsamples[:, 1], 'b.')
-    plt.plot(Csamples[:, 0], Csamples[:, 1], 'g.')
-    plt.show()
+    # plt.figure()
+    # plt.plot(Asamples[:, 0], Asamples[:, 1], 'r.')
+    # plt.plot(Bsamples[:, 0], Bsamples[:, 1], 'b.')
+    # plt.plot(Csamples[:, 0], Csamples[:, 1], 'g.')
+    # plt.show()
 
     x_train = np.vstack((Asamples, Bsamples, Csamples))
     y_train = np.vstack((np.array([[0, 0, 1]] * 200), np.array([[0, 1, 0]] * 200), np.array([[1, 0, 0]] * 200)))
@@ -89,7 +89,7 @@ def test_single_layer():
 
     model.summary()
 
-    model.compile(loss='categorical_crossentropy', optimizer='RMSprop', learning_rate=0.005)
+    model.compile(loss='categorical_crossentropy', optimizer='sgd', learning_rate=0.005)
 
     history = model.fit(x_train, y_train,
                         batch_size=batch_size,
