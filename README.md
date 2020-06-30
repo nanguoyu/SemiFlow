@@ -161,6 +161,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
     - [x] Flatten layer
 - [x] Stochastic gradient descent
 - [x] Momentum
+- [x] RMSProp
 - [ ] Big dataset support
     - [x] Train MNIST
     - [ ] cifar10
