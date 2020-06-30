@@ -43,6 +43,6 @@ def test_compute_gradients():
     w_value = float(w_value)
     max_x, min_x = np.max(input_x), np.min(input_x)
     max_y, min_y = w_value * max_x + b_value, w_value * min_x + b_value
-    plt.plot([max_x, min_x], [max_y, min_y], color='r')
-    plt.scatter(input_x, input_y)
-    plt.show()
+    # plt.plot([max_x, min_x], [max_y, min_y], color='r')
+    # plt.scatter(input_x, input_y)
+    # plt.show()

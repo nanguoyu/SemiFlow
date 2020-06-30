@@ -39,3 +39,7 @@ def test_sgd():
 
 def test_momentum():
     model(opt='momentum')
+
+
+def test_rmsprop():
+    model(opt='RMSProp')

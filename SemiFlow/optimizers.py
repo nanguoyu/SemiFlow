@@ -49,6 +49,7 @@ class StochasticGradientDescentOptimizer(Optimizer):
         self.batch_size = None
         self.last_layer = None
         self.first_layer = None
+        self.postorder_nodes = None
         super(StochasticGradientDescentOptimizer, self).__init__(loss, learning_rate, metrics, **kwargs)
 
     def build(self, x_train, y_train, epochs, batch_size, first_layer, last_layer):
@@ -71,9 +72,10 @@ class StochasticGradientDescentOptimizer(Optimizer):
         # Check data shape
         # assert x_train.shape[-1] == self.first_layer.shape[0], "wrong input size"
         # assert y_train.shape[-1] == self.last_layer.shape[-1], "wrong output size"
+        self.postorder_nodes = get_prerequisite(last_layer=self.loss)
 
     def ForwardPropagation(self, x_val, y_val):
-        postorder_nodes = get_prerequisite(last_layer=self.loss)
+        postorder_nodes = self.postorder_nodes
         for j in range(self.epochs):
             print("[epoch", j, "]", end="")
             i = 0
@@ -118,7 +120,7 @@ class StochasticGradientDescentOptimizer(Optimizer):
         bp(self.loss)
 
     def _UpdateParameters(self):
-        postorder_nodes = get_prerequisite(last_layer=self.loss)
+        postorder_nodes = self.postorder_nodes
         for node in postorder_nodes:
             if len(node.inbound) > 0 and node.params:
                 # print("Update: ", node.name)
@@ -151,6 +153,7 @@ class MomentumOptimizer(Optimizer):
         self.batch_size = None
         self.last_layer = None
         self.first_layer = None
+        self.postorder_nodes = None
         self.momentum = momentum
         self.v = dict()
         self.isFirstUpdate = True
@@ -176,9 +179,10 @@ class MomentumOptimizer(Optimizer):
         # Check data shape
         # assert x_train.shape[-1] == self.first_layer.shape[0], "wrong input size"
         # assert y_train.shape[-1] == self.last_layer.shape[-1], "wrong output size"
+        self.postorder_nodes = get_prerequisite(last_layer=self.loss)
 
     def ForwardPropagation(self, x_val, y_val):
-        postorder_nodes = get_prerequisite(last_layer=self.loss)
+        postorder_nodes = self.postorder_nodes
         for j in range(self.epochs):
             print("[epoch", j, "]", end="")
             i = 0
@@ -230,7 +234,7 @@ class MomentumOptimizer(Optimizer):
         The default b is 0.9
 
         """
-        postorder_nodes = get_prerequisite(last_layer=self.loss)
+        postorder_nodes = self.postorder_nodes
 
         if self.isFirstUpdate:
             for node in postorder_nodes:
@@ -240,10 +244,10 @@ class MomentumOptimizer(Optimizer):
                         continue
                     params = node.params.keys()
                     for param in params:
-                        node.params[param] -= self.learning_rate * node.grads[param]
                         if node not in self.v.keys():
                             self.v[node] = dict()
-                        self.v[node][param] = node.grads[param]
+                        self.v[node][param] = (1 - self.momentum) * node.grads[param]
+                        node.params[param] -= self.learning_rate * node.grads[param]
             self.isFirstUpdate = False
         else:
             for node in postorder_nodes:
@@ -253,8 +257,142 @@ class MomentumOptimizer(Optimizer):
                         continue
                     params = node.params.keys()
                     for param in params:
-                        self.v[node][param] = self.momentum * self.v[node][param] + node.grads[param]
+                        self.v[node][param] = self.momentum * self.v[node][param] + (1 - self.momentum) * node.grads[
+                            param]
                         node.params[param] -= self.learning_rate * self.v[node][param]
+
+    def _validation(self, x_val, y_val, postorder_nodes):
+        # Validation
+        if x_val is not None and y_val is not None:
+            for node in postorder_nodes:
+                if isinstance(node, InputLayer):
+                    node.ForwardPropagation(feed=x_val)
+                elif isinstance(node, losses.Loss):
+                    node.ForwardPropagation(y_true=y_val)
+                    return self.loss.output_value
+                elif isinstance(node, Layer):
+                    node.ForwardPropagation()
+
+
+class RMSPropOptimizer(Optimizer):
+
+    def __init__(self, loss, learning_rate, metrics, rho=0.9, **kwargs):
+        self.spliter = None
+        self.epochs = None
+        self.batch_size = None
+        self.last_layer = None
+        self.first_layer = None
+        self.postorder_nodes = None
+        self.rho = rho  # Factor of history
+        self.S = dict()
+        self.isFirstUpdate = True
+        super(RMSPropOptimizer, self).__init__(loss, learning_rate, metrics, **kwargs)
+
+    def build(self, x_train, y_train, epochs, batch_size, first_layer, last_layer):
+        assert isinstance(first_layer, Layer)
+        assert isinstance(last_layer, Layer)
+        # Called at the beginning of training
+        self.spliter = BatchSpliter(x_train, y_train, batch_size=batch_size)
+        self.epochs = epochs
+        self.batch_size = batch_size
+        self.first_layer = first_layer
+        self.last_layer = last_layer
+        # Speed BP
+        if isinstance(self.loss, losses.CategoricalCrossentropy) and hasattr(self.last_layer, 'activation'):
+            if isinstance(self.last_layer.activation, activations.Softmax):
+                self.loss = losses.get('softmax_categorical_crossentropy')
+                self.last_layer.activation = activations.get('linear')
+        # Bind networks and loss
+        self.loss.inbound.append(self.last_layer)
+        last_layer.outbound.append(self.loss)
+        # Check data shape
+        # assert x_train.shape[-1] == self.first_layer.shape[0], "wrong input size"
+        # assert y_train.shape[-1] == self.last_layer.shape[-1], "wrong output size"
+        self.postorder_nodes = get_prerequisite(last_layer=self.loss)
+
+    def ForwardPropagation(self, x_val, y_val):
+        postorder_nodes = self.postorder_nodes
+        for j in range(self.epochs):
+            print("[epoch", j, "]", end="")
+            i = 0
+            train_loss = []
+            self.spliter.shuffle()
+            for xbatch, ybatch in self.spliter.get_batch():
+                # Forward Propagation
+                for node in postorder_nodes:
+                    if isinstance(node, InputLayer):
+                        node.ForwardPropagation(feed=xbatch)
+                    elif isinstance(node, losses.Loss):
+                        node.ForwardPropagation(y_true=ybatch)
+                        # Back Propagation
+                        compute_gradients(node)
+                        # self.BackwardPropagation()
+                    elif isinstance(node, Layer):
+                        node.ForwardPropagation()
+                train_loss.append(self.loss.output_value)
+                # print("[epoch", j, "]", "\t Batch ", i, "train_loss", self.loss.output_value)
+                self._UpdateParameters()
+                i += 1
+            print("train_loss", backend.mean(train_loss), " ", end="")
+            self._history.add_record('train_loss', backend.mean(train_loss))
+            val_loss = self._validation(x_val=x_val, y_val=y_val, postorder_nodes=postorder_nodes)
+            print("val_loss", val_loss)
+            self._history.add_record('val_loss', val_loss)
+            # Todo I am not sure that validation is performed after update parameters
+
+    def BackwardPropagation(self):
+        """Back propagation implemented in recursive method
+
+        This method is not suggested. It's better to use compute_gradients
+        """
+
+        def bp(node: Layer, grad=None):
+            grad = node.BackwardPropagation(grad=grad)
+            if len(node.inbound) > 0:
+                for child in node.inbound:
+                    if not isinstance(child, InputLayer) and isinstance(child, Layer):
+                        bp(child, grad)
+
+        bp(self.loss)
+
+    def _UpdateParameters(self):
+        """mini-batch gradient descent with rho
+        w = w - a*dw/sqrt(sdw)
+        Sdw = b*Sdw + (1-b)dw**2 # element wise
+
+        The default b is 0.9
+
+        """
+        postorder_nodes = self.postorder_nodes
+        epsilon = backend.finfo(backend.float32).eps
+        if self.isFirstUpdate:
+            for node in postorder_nodes:
+                if len(node.inbound) > 0 and node.params:
+                    # print("Update: ", node.name)
+                    if not hasattr(node, 'params'):
+                        continue
+                    params = node.params.keys()
+                    for param in params:
+                        if node not in self.S.keys():
+                            self.S[node] = dict()
+                        self.S[node][param] = (1 - self.rho) * node.grads[param] ** 2
+                        self.S[node][param][self.S[node][param] < 0] = 0
+                        node.params[param] -= self.learning_rate * node.grads[param] / (
+                                    epsilon + backend.sqrt(self.S[node][param]))
+            self.isFirstUpdate = False
+        else:
+            for node in postorder_nodes:
+                if len(node.inbound) > 0 and node.params:
+                    # print("Update: ", node.name)
+                    if not hasattr(node, 'params'):
+                        continue
+                    params = node.params.keys()
+                    for param in params:
+                        # todo : rmsprop
+                        self.S[node][param] = self.rho * self.S[node][param] + (1 - self.rho) * node.grads[param] ** 2
+                        self.S[node][param][self.S[node][param] < 0] = 0
+                        node.params[param] -= self.learning_rate * node.grads[param] / (
+                                    epsilon + backend.sqrt(self.S[node][param]))
 
     def _validation(self, x_val, y_val, postorder_nodes):
         # Validation
@@ -283,8 +421,11 @@ def get(opt, loss, learning_rate=0.005, metrics=None, **kwargs):
             else:
                 return MomentumOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
         elif opt == 'rmsprop':
-            # TODO Implement RMSprop
-            return StochasticGradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
+            if 'rho' in kwargs:
+                rho = kwargs['rho']
+                return RMSPropOptimizer(loss=loss, learning_rate=learning_rate, rho=rho, metrics=metrics)
+            else:
+                return RMSPropOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
         else:
             # TODO other Optimizer
             return StochasticGradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
