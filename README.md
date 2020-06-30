@@ -160,6 +160,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
     - [x] MaxPooling2D layer
     - [x] Flatten layer
 - [x] Stochastic gradient descent
+- [x] Momentum
 - [ ] Big dataset support
     - [x] Train MNIST
     - [ ] cifar10
