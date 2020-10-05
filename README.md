@@ -162,9 +162,9 @@ score = model.evaluate(x_test, y_test, verbose=0)
 - [x] Stochastic gradient descent
 - [x] Momentum
 - [x] RMSProp
-- [ ] Big dataset support
+- [x] Big dataset support
     - [x] Train MNIST
-    - [ ] cifar10
+    - [x] cifar10
 - [ ] CUDA support
 - [ ] Examples and other docs
 

@@ -169,7 +169,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
 - [x] RMSProp
 - [x] Big dataset support
     - [x] Train MNIST
-    - [ ] cifar10
+    - [x] cifar10
 - [ ] CUDA support
 - [ ] Examples and other docs
 
