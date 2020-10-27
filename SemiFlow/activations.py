@@ -106,6 +106,7 @@ class Relu(Activation):
         grad_wrt_x = (self.input_value > 0.0) * grads
         return grad_wrt_x
 
+
 class Tanh(Activation):
     def __init__(self, **kwargs):
         super(Tanh, self).__init__(**kwargs)

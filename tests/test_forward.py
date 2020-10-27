@@ -4,7 +4,7 @@
 @Date : 2020/6/13
 """
 import numpy as np
-from SemiFlow.layer import Dense, Conv2D, InputLayer, MaxPooling2D, Flatten
+from SemiFlow.layer import Dense, Conv2D, InputLayer, MaxPooling2D, Flatten, RNN
 
 
 def test_mlp_forward():
@@ -107,3 +107,21 @@ def test_flatten_forward():
     grad = flatten.BackwardPropagation()
     print("\n")
     assert grad.shape[1:] == (3, 2)
+
+
+def test_rnn_forward():
+    rnn = RNN(3,
+              activation='tanh', )
+    input0 = InputLayer(shape=[5, 4], name='input0', dtype='float64')
+    input0.outbound.append(rnn)
+    rnn.inbound.append(input0)
+    rnn.InitParams()
+    print("\n")
+    x = np.ones([6, 5, 4])
+
+    inputs = input0.ForwardPropagation(feed=x)
+    r1 = rnn.ForwardPropagation()
+    print("\n", r1.shape)
+    print(r1)
+    # assert list(c1.shape) == [2, 5, 5, 32]
+    # assert np.all(c1.shape[1:] == conv1.output_shape)

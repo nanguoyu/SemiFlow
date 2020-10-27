@@ -151,7 +151,8 @@ class Conv2D(Layer):
         h_pad, w_pad = self.padding_width[1:3]
         output_channel = self.filters
         if hasattr(self, 'input_shape'):
-            input_channel = self.input_shape[-1]  # For a Conv2D layer as the first layer.
+            # For a Conv2D layer as the first layer.
+            input_channel = self.input_shape[-1]
             in_h, in_w = self.input_shape[0:2]
         else:
             # when x in {InputLayer, MaxPooling, Conv2D}

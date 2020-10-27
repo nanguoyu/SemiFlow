@@ -4,7 +4,7 @@
 @Date : 2020/6/13
 """
 import numpy as np
-from SemiFlow.layer import Dense, InputLayer, Conv2D, MaxPooling2D, Flatten
+from SemiFlow.layer import Dense, InputLayer, Conv2D, MaxPooling2D, Flatten, RNN
 from SemiFlow.losses import SoftmaxCategoricalCrossentropy, softmax_categorical_crossentropy
 
 
@@ -126,3 +126,18 @@ def test_flatten_backward():
     f1 = flatten.ForwardPropagation()
     grad = flatten.BackwardPropagation()
     assert grad.shape[1:] == (3, 2)
+
+
+def test_rnn_backward():
+    rnn = RNN(3,
+              activation='tanh', )
+    input0 = InputLayer(shape=[5, 4], name='input0', dtype='float64')
+    input0.outbound.append(rnn)
+    rnn.inbound.append(input0)
+    rnn.InitParams()
+    print("\n")
+    x = np.ones([6, 5, 4])
+    inputs = input0.ForwardPropagation(feed=x)
+    r1 = rnn.ForwardPropagation()
+    grad_wrt_x = rnn.BackwardPropagation()
+    print(grad_wrt_x.shape)

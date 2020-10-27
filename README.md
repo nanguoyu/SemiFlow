@@ -159,6 +159,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
     - [x] Conv2D layer
     - [x] MaxPooling2D layer
     - [x] Flatten layer
+    - [x] RNN layer
 - [x] Stochastic gradient descent
 - [x] Momentum
 - [x] RMSProp

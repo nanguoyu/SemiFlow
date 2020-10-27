@@ -106,7 +106,7 @@ class Dense(Layer):
         # print(self.name+'.InitParams', self.shape)
         kernel = self.kernel_initializer(shape=[input_shape, output_shape])
         # bias = self.kernel_initializer(shape=[output_shape])
-        bias = self.kernel_initializer(shape=[1]) * backend.ones([output_shape]).T
+        bias = self.bias_initializer(shape=[1]) * backend.ones([output_shape]).T
         self.params = {
             'kernel': kernel,
             'bias': bias}
