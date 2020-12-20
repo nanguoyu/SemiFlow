@@ -23,7 +23,7 @@ def download(url, file, checksum):
     if os.path.exists('./' + file):
         temp_size = os.path.getsize('./' + file)
         if md5_checksum('./' + file) == checksum:
-            return
+            return './' + file
         else:
             print("Wrong checksum!")
     else:
@@ -42,6 +42,8 @@ def download(url, file, checksum):
                 sys.stdout.write("\r[%s%s] %d%%" % ('█' * done, ' ' * (50 - done), 100 * temp_size / total_size))
                 sys.stdout.flush()
     print()
+    # Todo: support customize path
+    return './' + file
 
 
 if __name__ == '__main__':

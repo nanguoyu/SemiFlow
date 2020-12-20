@@ -135,7 +135,7 @@ class Sequential(Model):
                 loss=None,
                 optimizer=None,
                 learning_rate=None,
-                metrics=None,
+                metrics=None,  # Todo: implement metrics
                 **kwargs):
         """Compile function used before fit
         Args:
