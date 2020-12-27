@@ -54,7 +54,7 @@ model.add(Dense(units=128, activation='relu'))
 model.add(Dense(units=64, activation='relu'))
 model.add(Dense(num_classes, activation='softmax'))
 
-# Pring model structure
+# Print model structure
 model.summary()
 
 # Compile model and specify optimizer and loss function
