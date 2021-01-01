@@ -13,7 +13,7 @@ SemiFlow is a deep learning framework with auto-differentiation, developing from
 ## Installation
 
 ``` 
-git https://github.com/nanguoyu/SemiFlow.git
+git clone https://github.com/nanguoyu/SemiFlow.git
 cd SemiFlow
 pip install .
 ```
