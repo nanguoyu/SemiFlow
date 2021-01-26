@@ -5,10 +5,7 @@
 """
 from ..engine.core import backend
 from .core import Layer
-from . import Conv2D, InputLayer
 
-
-# Todo MaxPooling2D layer
 
 class MaxPooling2D(Layer):
 

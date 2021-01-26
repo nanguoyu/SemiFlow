@@ -191,5 +191,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
  - [[SemiFlow 动手实现深度学习框架 02] 设计神经网络组件](https://www.nanguoyu.com/semiflow-02)
 
 ## Reference
-- [The Supervised Machine Learning book(An upcoming textbook)](http://smlbook.org/)
 - [simpleflow](https://github.com/PytLab/simpleflow)
+- [tinynn](https://github.com/borgwang/tinynn/)
+- [The Supervised Machine Learning book(An upcoming textbook)](http://smlbook.org/)
+
