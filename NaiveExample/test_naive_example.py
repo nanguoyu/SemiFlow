@@ -20,8 +20,6 @@ plt.show()
 x_train = np.vstack((Asamples, Bsamples))
 y_train = np.append(np.ones(200), np.zeros(200))
 
-# print(x_train[0])
-
 nn = Dense()
 
 nn.train(x_train=x_train, y_train=y_train, learning_rate=0.01, epochs=110)
