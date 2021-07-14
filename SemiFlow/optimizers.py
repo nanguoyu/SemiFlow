@@ -102,7 +102,7 @@ class StochasticGradientDescentOptimizer(Optimizer):
             val_loss = self._validation(x_val=x_val, y_val=y_val, postorder_nodes=postorder_nodes)
             print("val_loss", val_loss)
             self._history.add_record('val_loss', val_loss)
-            # Todo I am not sure that validation is performed after update parameters
+            # Todo I am not sure that if the validation is performed after updating parameters
 
     def BackwardPropagation(self):
         """Back propagation implemented in recursive method

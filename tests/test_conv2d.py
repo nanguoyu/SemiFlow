@@ -20,7 +20,6 @@ def test_conv2d_mnist():
 
     x_test = x_test.reshape((-1, 28, 28, 1))
 
-
     num_classes = 10
     batch_size = 32
     epochs = 1
