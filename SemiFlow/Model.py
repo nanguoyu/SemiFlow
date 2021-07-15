@@ -7,8 +7,10 @@ from .engine.core import backend
 from .layer.core import Layer
 from .layer.input import InputLayer
 from .activations import Activation
+from .losses import Loss
 from .utils import DataShuffle, split_train_val
 from . import optimizers
+import collections
 
 
 class Model(object):
@@ -35,6 +37,18 @@ class Model(object):
     def compile(self, **kwargs):
         """Build model
         """
+        raise NotImplementedError
+
+    def save(self, **kwargs):
+        """Save model weights
+        """
+
+        raise NotImplementedError
+
+    def load(self, **kwargs):
+        """Load model weights
+        """
+
         raise NotImplementedError
 
 
@@ -191,6 +205,7 @@ class Sequential(Model):
         self.layers.append(layer)
 
     def summary(self):
+        """Print out model structure"""
         print("\n" + 20 * "=")
         layer = self.first_layer
         while layer and not isinstance(layer, InputLayer) and not isinstance(layer, Activation):
@@ -200,6 +215,57 @@ class Sequential(Model):
                 break
             layer = layer.outbound[0]
         print(20 * "=")
+
+    def save(self,
+             path,
+             **kwargs):
+        """Save model weights
+
+        Args:
+            path: The path to save weight file
+            **kwargs:
+        """
+
+        weights = collections.OrderedDict()
+        layer = self.first_layer
+        while layer and not isinstance(layer, InputLayer) and not isinstance(layer, Activation) \
+                and not isinstance(layer, Loss):
+            name = layer.name
+            parameters = layer.params
+            weights[name] = parameters
+            if not layer.outbound:
+                break
+            layer = layer.outbound[0]
+        weights = backend.array([weights])
+        backend.save(path, weights, allow_pickle=True)
+
+    def load(self,
+             path,
+             **kwargs):
+        """Load model weights
+
+        Args:
+            path: The path to load weight file
+            **kwargs:
+        """
+
+        weights = backend.load(path, allow_pickle=True)[0]
+
+        if not isinstance(weights, collections.OrderedDict):
+            raise ValueError(f'{path} is not a weight file for SemiFlow')
+
+        layer = self.first_layer
+        while layer and not isinstance(layer, InputLayer) and not isinstance(layer, Activation) \
+                and not isinstance(layer, Loss):
+            name = layer.name
+            loaded_layer = weights[name]
+            keys = loaded_layer.keys()
+            for key in keys:
+                assert loaded_layer[key].shape == layer.params[key].shape
+                layer.params[key] = loaded_layer[key]
+            if not layer.outbound:
+                break
+            layer = layer.outbound[0]
 
     def evaluate(self,
                  x=None,

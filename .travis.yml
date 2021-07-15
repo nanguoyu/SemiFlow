@@ -28,6 +28,7 @@ script:
   - coverage run -p ./tests/test_losses.py
   - coverage run -p ./tests/test_mlp.py
   - coverage run -p ./tests/test_optimizer.py
+  - coverage run -p ./tests/test_model_utils.py
   - coverage combine
 
 after_success:

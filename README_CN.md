@@ -1,6 +1,7 @@
 
 
 # SemiFlow
+
 [![Build Status](https://travis-ci.com/nanguoyu/SemiFlow.svg?branch=master)](https://travis-ci.com/nanguoyu/SemiFlow)
 [![codecov](https://codecov.io/gh/nanguoyu/SemiFlow/branch/master/graph/badge.svg)](https://codecov.io/gh/nanguoyu/SemiFlow)
 
@@ -9,6 +10,10 @@
 [English](README.md) | 中文
 
 SemiFlow 是一个基于Numpy的支持自动求导的深度学习框架。
+
+## 最新消息!
+
+> 2021年7月， 我们为SemiFlow新增了模型保存与加载功能！
 
 ------
 
@@ -161,16 +166,18 @@ score = model.evaluate(x_test, y_test, verbose=0)
     - [x] bce
     - [x] ce
 - [ ] Complex Layer
-    - [x] Convolutional layer
-    - [x] MaxPooling2D layer
-    - [x] Flatten layer
-    - [x] RNN layer
+  - [x] Convolutional layer
+  - [x] MaxPooling2D layer
+  - [x] Flatten layer
+  - [x] RNN layer
 - [x] Stochastic gradient descent
 - [x] Momentum
 - [x] RMSProp
 - [x] Big dataset support
-    - [x] Train MNIST
-    - [x] cifar10
+  - [x] Train MNIST
+  - [x] cifar10
+- [x] Save model
+- [x] Load model
 - [ ] CUDA support
 - [ ] Examples and other docs
 

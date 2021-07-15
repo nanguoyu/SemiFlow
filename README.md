@@ -1,6 +1,7 @@
 
 
 # SemiFlow
+
 [![Build Status](https://travis-ci.com/nanguoyu/SemiFlow.svg?branch=master)](https://travis-ci.com/nanguoyu/SemiFlow)
 [![codecov](https://codecov.io/gh/nanguoyu/SemiFlow/branch/master/graph/badge.svg)](https://codecov.io/gh/nanguoyu/SemiFlow)
 
@@ -8,7 +9,11 @@
 
 English | [中文](README_CN.md)
 
-SemiFlow is a deep learning framework with auto-differentiation, developing from Numpy. 
+SemiFlow is a deep learning framework with auto-differentiation, developing from Numpy.
+
+## News!
+
+> July 2021. We are introducing **model.save** and **model.load** !
 
 ## Installation
 
@@ -154,16 +159,18 @@ score = model.evaluate(x_test, y_test, verbose=0)
     - [x] bce
     - [x] ce
 - [ ] Complex Layer
-    - [x] Conv2D layer
-    - [x] MaxPooling2D layer
-    - [x] Flatten layer
-    - [x] RNN layer
+  - [x] Conv2D layer
+  - [x] MaxPooling2D layer
+  - [x] Flatten layer
+  - [x] RNN layer
 - [x] Stochastic gradient descent
 - [x] Momentum
 - [x] RMSProp
 - [x] Big dataset support
-    - [x] Train MNIST
-    - [x] cifar10
+  - [x] Train MNIST
+  - [x] cifar10
+- [x] Save model
+- [x] Load model
 - [ ] CUDA support
 - [ ] Examples and other docs
 
