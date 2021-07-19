@@ -127,7 +127,7 @@ class Sequential(Model):
         if shuffle:
             x, y = DataShuffle(x, y)
 
-        if validation_data is not None:
+        if validation_data is not None and validation_data[0] is not None and validation_data[1] is not None:
             x_train, y_train = x, y
             x_val, y_val = validation_data[0], validation_data[1]
         else:
@@ -151,8 +151,7 @@ class Sequential(Model):
             batch_size: The number of a group samples per gradient update.
 
         """
-        self.optimizer.build(x_train, y_train, epochs, batch_size, self.first_layer, self.last_layer)
-        self.optimizer.ForwardPropagation(x_val, y_val)
+        self.optimizer.ForwardPropagation(x_train, y_train, x_val, y_val, epochs, batch_size)
         return self.optimizer.GetHistory()
 
     def compile(self,
@@ -192,6 +191,7 @@ class Sequential(Model):
             if not layer.outbound:
                 break
             layer = layer.outbound[0]
+        self.optimizer.build(self.first_layer, self.last_layer)
         self.isComplied = True
 
     def add(self, layer):

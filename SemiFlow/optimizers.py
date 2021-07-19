@@ -31,6 +31,10 @@ class Optimizer(object):
     def _UpdateParameters(self, **kwargs):
         raise NotImplementedError
 
+    def build(self, **kwargs):
+        """Build optimizer"""
+        raise NotImplementedError
+
     def GetHistory(self):
         """Record of train_loss and other metrics
         Returns: History instance
@@ -52,13 +56,9 @@ class StochasticGradientDescentOptimizer(Optimizer):
         self.postorder_nodes = None
         super(StochasticGradientDescentOptimizer, self).__init__(loss, learning_rate, metrics, **kwargs)
 
-    def build(self, x_train, y_train, epochs, batch_size, first_layer, last_layer):
+    def build(self, first_layer, last_layer):
         assert isinstance(first_layer, Layer)
         assert isinstance(last_layer, Layer)
-        # Called at the beginning of training
-        self.spliter = BatchSpliter(x_train, y_train, batch_size=batch_size)
-        self.epochs = epochs
-        self.batch_size = batch_size
         self.first_layer = first_layer
         self.last_layer = last_layer
         # Speed BP
@@ -74,9 +74,12 @@ class StochasticGradientDescentOptimizer(Optimizer):
         # assert y_train.shape[-1] == self.last_layer.shape[-1], "wrong output size"
         self.postorder_nodes = get_prerequisite(last_layer=self.loss)
 
-    def ForwardPropagation(self, x_val, y_val):
+    def ForwardPropagation(self, x_train, y_train, x_val, y_val, epochs, batch_size):
+        self.epochs = epochs
+        self.batch_size = batch_size
+        self.spliter = BatchSpliter(x_train, y_train, batch_size=self.batch_size)
         postorder_nodes = self.postorder_nodes
-        for j in range(self.epochs):
+        for j in range(1, self.epochs, 1):
             print("[epoch", j, "]", end="")
             i = 0
             train_loss = []
@@ -141,6 +144,8 @@ class StochasticGradientDescentOptimizer(Optimizer):
                     return self.loss.output_value
                 elif isinstance(node, Layer):
                     node.ForwardPropagation()
+        else:
+            print("x_val is None and y_val is None")
 
 
 class MomentumOptimizer(Optimizer):
@@ -159,13 +164,11 @@ class MomentumOptimizer(Optimizer):
         self.isFirstUpdate = True
         super(MomentumOptimizer, self).__init__(loss, learning_rate, metrics, **kwargs)
 
-    def build(self, x_train, y_train, epochs, batch_size, first_layer, last_layer):
+    def build(self, first_layer, last_layer):
         assert isinstance(first_layer, Layer)
         assert isinstance(last_layer, Layer)
         # Called at the beginning of training
-        self.spliter = BatchSpliter(x_train, y_train, batch_size=batch_size)
-        self.epochs = epochs
-        self.batch_size = batch_size
+
         self.first_layer = first_layer
         self.last_layer = last_layer
         # Speed BP
@@ -181,7 +184,10 @@ class MomentumOptimizer(Optimizer):
         # assert y_train.shape[-1] == self.last_layer.shape[-1], "wrong output size"
         self.postorder_nodes = get_prerequisite(last_layer=self.loss)
 
-    def ForwardPropagation(self, x_val, y_val):
+    def ForwardPropagation(self, x_train, y_train, x_val, y_val, epochs, batch_size):
+        self.spliter = BatchSpliter(x_train, y_train, batch_size=batch_size)
+        self.epochs = epochs
+        self.batch_size = batch_size
         postorder_nodes = self.postorder_nodes
         for j in range(self.epochs):
             print("[epoch", j, "]", end="")
@@ -288,13 +294,11 @@ class RMSPropOptimizer(Optimizer):
         self.isFirstUpdate = True
         super(RMSPropOptimizer, self).__init__(loss, learning_rate, metrics, **kwargs)
 
-    def build(self, x_train, y_train, epochs, batch_size, first_layer, last_layer):
+    def build(self, first_layer, last_layer):
         assert isinstance(first_layer, Layer)
         assert isinstance(last_layer, Layer)
         # Called at the beginning of training
-        self.spliter = BatchSpliter(x_train, y_train, batch_size=batch_size)
-        self.epochs = epochs
-        self.batch_size = batch_size
+
         self.first_layer = first_layer
         self.last_layer = last_layer
         # Speed BP
@@ -310,7 +314,10 @@ class RMSPropOptimizer(Optimizer):
         # assert y_train.shape[-1] == self.last_layer.shape[-1], "wrong output size"
         self.postorder_nodes = get_prerequisite(last_layer=self.loss)
 
-    def ForwardPropagation(self, x_val, y_val):
+    def ForwardPropagation(self, x_train, y_train, x_val, y_val, epochs, batch_size):
+        self.spliter = BatchSpliter(x_train, y_train, batch_size=batch_size)
+        self.epochs = epochs
+        self.batch_size = batch_size
         postorder_nodes = self.postorder_nodes
         for j in range(self.epochs):
             print("[epoch", j, "]", end="")
@@ -378,7 +385,7 @@ class RMSPropOptimizer(Optimizer):
                         self.S[node][param] = (1 - self.rho) * node.grads[param] ** 2
                         self.S[node][param][self.S[node][param] < 0] = 0
                         node.params[param] -= self.learning_rate * node.grads[param] / (
-                                    epsilon + backend.sqrt(self.S[node][param]))
+                                epsilon + backend.sqrt(self.S[node][param]))
             self.isFirstUpdate = False
         else:
             for node in postorder_nodes:
@@ -392,7 +399,7 @@ class RMSPropOptimizer(Optimizer):
                         self.S[node][param] = self.rho * self.S[node][param] + (1 - self.rho) * node.grads[param] ** 2
                         self.S[node][param][self.S[node][param] < 0] = 0
                         node.params[param] -= self.learning_rate * node.grads[param] / (
-                                    epsilon + backend.sqrt(self.S[node][param]))
+                                epsilon + backend.sqrt(self.S[node][param]))
 
     def _validation(self, x_val, y_val, postorder_nodes):
         # Validation
@@ -430,8 +437,8 @@ def get(opt, loss, learning_rate=0.005, metrics=None, **kwargs):
             # TODO other Optimizer
             return StochasticGradientDescentOptimizer(loss=loss, learning_rate=learning_rate, metrics=metrics)
     else:
-        ValueError('Could not interpret '
-                   'initializer:', opt)
+        raise ValueError(opt, 'Could not interpret '
+                              'initializer:')
 
 
 def compute_gradients(target_op):
@@ -442,7 +449,6 @@ def compute_gradients(target_op):
                       be computed.
     :type target_op: Any operation type.
     :return grad_table: A table containing layer objects and gradients.
-    :type grad_table: dict.
     """
     # Todo: Modify simple version and correct errors
     # A dict containing a mapping between layer and gradient value of target_op wrt the layer's output.

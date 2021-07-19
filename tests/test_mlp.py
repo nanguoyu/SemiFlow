@@ -46,10 +46,10 @@ def test_simple_mlp():
 
     x_train = np.vstack((Asamples, Bsamples))
     y_train = np.vstack((np.array([[0, 1]] * 200), np.array([[1, 0]] * 200)))
-    print(x_train.shape, y_train.shape)
+    print(f'\n x_train.shape {x_train.shape}, y_train.shape {y_train.shape}')
     num_classes = 2
     batch_size = 10
-    epochs = 20
+    epochs = 100
 
     model = Sequential()
     model.add(Dense(units=2, activation='relu', input_shape=(2,)))
@@ -63,7 +63,8 @@ def test_simple_mlp():
                         batch_size=batch_size,
                         epochs=epochs,
                         verbose=1,
-                        validation_data=(None, None))
+                        validation_data=(None, None),
+                        validation_split=0.2)
 
 
 def test_single_layer():
