@@ -51,6 +51,16 @@ class Model(object):
 
         raise NotImplementedError
 
+    @property
+    def parameters(self):
+        """obtain the current parameters in numpy.ndarray"""
+        raise NotImplementedError
+
+    @property
+    def state_dict(self):
+        """Obtain the current parameters in Python Dict"""
+        raise NotImplementedError
+
 
 class Sequential(Model):
     """Sequential model is a kind model that each layer is followed by one layer.
@@ -100,10 +110,10 @@ class Sequential(Model):
             batch_size: Integer. The number of a group samples per gradient update. The default value is 16.
             epochs: Integer. Number of epochs to train the model. After an epoch, x and y would be visited.
             verbose: Integer. 0, 1, or 2. Verbosity mode.
-                0 = silent, 1 = progress bar, 2 = one line per epoch. **Todo**
-            callbacks: List of callback instances to apply during training and validation. **Todo**
-            validation_split: Float between 0 to 1. Fraction of the training data to be used as validation data. **Todo**
-            validation_data: Validation data to evaluate model metrics at the end of each epoch. **Todo**
+                0 = silent, 1 = progress bar, 2 = one line per epoch.
+            callbacks: List of callback instances to apply during training and validation.
+            validation_split: Float between 0 to 1. Fraction of the training data to be used as validation data.
+            validation_data: Validation data to evaluate model metrics at the end of each epoch.
             shuffle: Boolean. Whether to shuffle the training data.
             **kwargs: More parameters will be supported.
 
@@ -117,7 +127,7 @@ class Sequential(Model):
         if shuffle:
             x, y = DataShuffle(x, y)
 
-        if validation_data is not None:
+        if validation_data is not None and validation_data[0] is not None and validation_data[1] is not None:
             x_train, y_train = x, y
             x_val, y_val = validation_data[0], validation_data[1]
         else:
@@ -141,8 +151,7 @@ class Sequential(Model):
             batch_size: The number of a group samples per gradient update.
 
         """
-        self.optimizer.build(x_train, y_train, epochs, batch_size, self.first_layer, self.last_layer)
-        self.optimizer.ForwardPropagation(x_val, y_val)
+        self.optimizer.ForwardPropagation(x_train, y_train, x_val, y_val, epochs, batch_size)
         return self.optimizer.GetHistory()
 
     def compile(self,
@@ -182,6 +191,7 @@ class Sequential(Model):
             if not layer.outbound:
                 break
             layer = layer.outbound[0]
+        self.optimizer.build(self.first_layer, self.last_layer)
         self.isComplied = True
 
     def add(self, layer):
@@ -216,16 +226,8 @@ class Sequential(Model):
             layer = layer.outbound[0]
         print(20 * "=")
 
-    def save(self,
-             path,
-             **kwargs):
-        """Save model weights
-
-        Args:
-            path: The path to save weight file
-            **kwargs:
-        """
-
+    @property
+    def parameters(self):
         weights = collections.OrderedDict()
         layer = self.first_layer
         while layer and not isinstance(layer, InputLayer) and not isinstance(layer, Activation) \
@@ -236,7 +238,42 @@ class Sequential(Model):
             if not layer.outbound:
                 break
             layer = layer.outbound[0]
-        weights = backend.array([weights])
+
+        return weights
+
+    @property
+    def state_dict(self):
+        weights = collections.OrderedDict()
+        layer = self.first_layer
+        while layer and not isinstance(layer, InputLayer) and not isinstance(layer, Activation) \
+                and not isinstance(layer, Loss):
+            name = layer.name
+            parameters = layer.params
+            weights[name] = parameters
+            for key in parameters.keys():
+                weights[name][key] = parameters[key].tolist()
+            if not layer.outbound:
+                break
+            layer = layer.outbound[0]
+
+        return weights
+
+    def save(self,
+             path,
+             **kwargs):
+        """Save model weights
+
+        Args:
+            path: The path to save weight file
+            **kwargs:
+        """
+        parameters = self.parameters
+        for layer_name, parameters_dict in parameters.items():
+            keys = parameters_dict.keys()
+            for parameter_name in keys:
+                parameters[layer_name][parameter_name] = backend.array(parameters[layer_name][parameter_name])
+        weights = backend.array([parameters])
+
         backend.save(path, weights, allow_pickle=True)
 
     def load(self,

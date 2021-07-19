@@ -6,6 +6,7 @@
 from SemiFlow.layer import Dense
 from SemiFlow.Model import Sequential
 import numpy as np
+import json
 
 
 def test_model_save():
@@ -26,6 +27,7 @@ def test_model_save():
     model.summary()
 
     model.compile(loss='categorical_crossentropy', optimizer='sgd', learning_rate=0.05)
+    model.save("./test_model.npy")
     model.load("./test_model.npy")
     history = model.fit(x_train, y_train,
                         batch_size=batch_size,
@@ -34,3 +36,6 @@ def test_model_save():
                         validation_data=(None, None))
 
     model.save("./test_model.npy")
+    weights = model.state_dict
+    print(weights)
+    print(json.dumps(weights))
