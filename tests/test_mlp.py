@@ -96,4 +96,5 @@ def test_single_layer():
                         batch_size=batch_size,
                         epochs=epochs,
                         verbose=1,
-                        validation_data=(None, None))
+                        validation_data=(None, None),
+                        validation_split=0.2)

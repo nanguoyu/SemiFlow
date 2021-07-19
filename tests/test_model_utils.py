@@ -29,13 +29,21 @@ def test_model_save():
     model.compile(loss='categorical_crossentropy', optimizer='sgd', learning_rate=0.05)
     model.save("./test_model.npy")
     model.load("./test_model.npy")
-    history = model.fit(x_train, y_train,
-                        batch_size=batch_size,
-                        epochs=epochs,
-                        verbose=1,
-                        validation_data=(None, None))
-
+    history1 = model.fit(x_train, y_train,
+                         batch_size=batch_size,
+                         epochs=epochs,
+                         verbose=1,
+                         validation_data=(None, None),
+                         validation_split=0.2)
     model.save("./test_model.npy")
+    model.load("./test_model.npy")
+    print("/n")
+    history2 = model.fit(x_train, y_train,
+                         batch_size=batch_size,
+                         epochs=epochs,
+                         verbose=1,
+                         validation_data=(None, None),
+                         validation_split=0.2)
     weights = model.state_dict
     print(weights)
     print(json.dumps(weights))
