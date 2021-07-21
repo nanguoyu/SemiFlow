@@ -11,3 +11,4 @@ from SemiFlow import Model as Model
 from SemiFlow import activations as activations
 from SemiFlow import initializers as initializers
 from SemiFlow import optimizers as optimizers
+from SemiFlow.engine import backend

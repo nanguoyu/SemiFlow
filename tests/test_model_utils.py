@@ -37,7 +37,7 @@ def test_model_save():
                          validation_split=0.2)
     model.save("./test_model.npy")
     model.load("./test_model.npy")
-    print("/n")
+    print("\n")
     history2 = model.fit(x_train, y_train,
                          batch_size=batch_size,
                          epochs=epochs,

@@ -11,6 +11,7 @@ from .losses import Loss
 from .utils import DataShuffle, split_train_val
 from . import optimizers
 import collections
+import copy
 
 
 class Model(object):
@@ -54,6 +55,10 @@ class Model(object):
     @property
     def parameters(self):
         """obtain the current parameters in numpy.ndarray"""
+        raise NotImplementedError
+
+    @parameters.setter
+    def parameters(self, **kwargs):
         raise NotImplementedError
 
     @property
@@ -241,6 +246,24 @@ class Sequential(Model):
 
         return weights
 
+    @parameters.setter
+    def parameters(self, weights):
+        layer = self.first_layer
+        while layer and not isinstance(layer, InputLayer) and not isinstance(layer, Activation) \
+                and not isinstance(layer, Loss):
+            name = layer.name
+            loaded_layer = weights[name]
+            keys = loaded_layer.keys()
+            for key in keys:
+                if isinstance(loaded_layer[key], list):
+                    loaded_layer[key] = backend.array(loaded_layer[key])
+                assert isinstance(loaded_layer[key], backend.ndarray)
+                assert loaded_layer[key].shape == layer.params[key].shape
+                layer.params[key] = loaded_layer[key]
+            if not layer.outbound:
+                break
+            layer = layer.outbound[0]
+
     @property
     def state_dict(self):
         weights = collections.OrderedDict()
@@ -248,7 +271,7 @@ class Sequential(Model):
         while layer and not isinstance(layer, InputLayer) and not isinstance(layer, Activation) \
                 and not isinstance(layer, Loss):
             name = layer.name
-            parameters = layer.params
+            parameters = copy.deepcopy(layer.params)
             weights[name] = parameters
             for key in parameters.keys():
                 weights[name][key] = parameters[key].tolist()
@@ -298,6 +321,9 @@ class Sequential(Model):
             loaded_layer = weights[name]
             keys = loaded_layer.keys()
             for key in keys:
+                if isinstance(loaded_layer[key], list):
+                    loaded_layer[key] = backend.array(loaded_layer[key])
+                assert isinstance(loaded_layer[key], backend.ndarray)
                 assert loaded_layer[key].shape == layer.params[key].shape
                 layer.params[key] = loaded_layer[key]
             if not layer.outbound:

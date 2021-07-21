@@ -59,12 +59,12 @@ def test_simple_mlp():
 
     model.compile(loss='categorical_crossentropy', optimizer='sgd', learning_rate=0.05)
 
-    history = model.fit(x_train, y_train,
-                        batch_size=batch_size,
-                        epochs=epochs,
-                        verbose=1,
-                        validation_data=(None, None),
-                        validation_split=0.2)
+    history1 = model.fit(x_train, y_train,
+                         batch_size=batch_size,
+                         epochs=epochs,
+                         verbose=1,
+                         validation_data=(None, None),
+                         validation_split=0.2)
 
 
 def test_single_layer():
