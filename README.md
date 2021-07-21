@@ -13,6 +13,9 @@ SemiFlow is a deep learning framework with auto-differentiation, developing from
 
 ## News!
 
+> July 21, 2021. SemiFlow is going to support **Distributed deep learning**. The first
+> parallel solution is Parameter Sever.
+
 > July 2021. We are introducing **model.save** and **model.load** !
 
 ## Installation
@@ -141,8 +144,15 @@ score = model.evaluate(x_test, y_test, verbose=0)
 
 ```
 
+### Distributed Machine Learning
 
+Distributed machine learning is now launched! SemiFLow now supports parameter server.
 
+#### parameter server example
+
+Client/Worker example code in [distributed_parameter_client.py](./example/distributed_parameter_client.py)
+
+Server/Master example code in [distributed_parameter_server.py](./example/distributed_parameter_server.py)
 
 ### Features
 
@@ -150,7 +160,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
 - [x] Model manager for training
 - [x] Optimizer
 - [x] Activation function
-    - [x] ReLU
+  - [x] ReLU
     - [x] Sigmoid
     - [x] tanh
 - [x] Loss
@@ -171,6 +181,8 @@ score = model.evaluate(x_test, y_test, verbose=0)
   - [x] cifar10
 - [x] Save model
 - [x] Load model
+- [x] Distributed machine learning
+  - [x] Parameter Server
 - [ ] CUDA support
 - [ ] Examples and other docs
 

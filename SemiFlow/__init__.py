@@ -5,7 +5,7 @@
 """
 from __future__ import absolute_import
 
-__version__ = '1.0.5'
+__version__ = '1.1.0'
 
 from SemiFlow import Model as Model
 from SemiFlow import activations as activations

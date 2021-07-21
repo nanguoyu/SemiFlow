@@ -12,7 +12,8 @@
 SemiFlow 是一个基于Numpy的支持自动求导的深度学习框架。
 
 ## 最新消息!
-
+> 2021年7月21日. SemiFlow 现已支持分布式机器学习！ 第一个被支持方案是 Parameter Sever.
+>
 > 2021年7月， 我们为SemiFlow新增了模型保存与加载功能！
 
 ------
@@ -149,16 +150,24 @@ score = model.evaluate(x_test, y_test, verbose=0)
 
 ```
 
+### 分布式机器学习
 
+分布是机器学习特性现已登录！目前支持Parameter Server模式。
 
+#### parameter server 例子
+
+Client/Worker example code in [distributed_parameter_client.py](./example/distributed_parameter_client.py)
+
+Server/Master example code in [distributed_parameter_server.py](./example/distributed_parameter_server.py)
 
 ### 特征
+
 - [x] Dense layer
 - [x] Model manager for training
 - [x] Optimizer
 - [x] Activation function
-    - [x] ReLU
-    - [x] Sigmoid
+  - [x] ReLU
+  - [x] Sigmoid
     - [x] tanh
 - [x] Loss
     - [x] mse
@@ -178,6 +187,8 @@ score = model.evaluate(x_test, y_test, verbose=0)
   - [x] cifar10
 - [x] Save model
 - [x] Load model
+- [x] Distributed machine learning
+  - [x] Parameter Server
 - [ ] CUDA support
 - [ ] Examples and other docs
 
