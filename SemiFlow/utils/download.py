@@ -44,10 +44,3 @@ def download(url, file, checksum):
     print()
     # Todo: support customize path
     return './' + file
-
-
-if __name__ == '__main__':
-    url = "http://deeplearning.net/data/mnist/"
-    file = "mnist.pkl.gz"
-    checksum = "a02cd19f81d51c426d7ca14024243ce9"
-    download(url + file, file, checksum)

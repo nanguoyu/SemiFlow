@@ -131,7 +131,8 @@ def load_mnist_yann_lecun(url, file, md5):
 
 
 def mnist(one_hot=False):
-    url_mnist = "http://yann.lecun.com/exdb/mnist/"
+    # url_mnist = "http://yann.lecun.com/exdb/mnist/"
+    url_mnist = "https://ossci-datasets.s3.amazonaws.com/mnist/"
     train_image_file = 'train-images-idx3-ubyte.gz'
     train_image_md5 = "f68b3c2dcbeaaa9fbdd348bbdeb94873"
     train_image_size = 9912422
