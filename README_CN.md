@@ -4,6 +4,7 @@
 
 [![Build Status](https://travis-ci.com/nanguoyu/SemiFlow.svg?branch=master)](https://travis-ci.com/nanguoyu/SemiFlow)
 [![codecov](https://codecov.io/gh/nanguoyu/SemiFlow/branch/master/graph/badge.svg)](https://codecov.io/gh/nanguoyu/SemiFlow)
+[![DOI](https://zenodo.org/badge/249524882.svg)](https://zenodo.org/badge/latestdoi/249524882)
 
 <img src="./.github/SemiFlow.png" alt="SemiFlow Logo" style="zoom:50%;" />
 
