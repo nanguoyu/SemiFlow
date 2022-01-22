@@ -1,5 +1,4 @@
-numpy>=1.19.2
-matplotlib>=3.3.4
-six>=1.15.0
-pytest>=6.2.2
-requests>=2.25.1
+six
+pytest
+requests
+numpy>=1.14.0

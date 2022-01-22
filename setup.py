@@ -8,8 +8,9 @@ import setuptools
 
 setuptools.setup(
     name='SemiFlow',
-    version='1.1.1',
-    description='Implement a deep learning framework from zero(strictly Numpy).',
+    version='1.1.2',
+    description='SemiFlow is a deep learning framework with automatic differentiation and automatic shape inference, '
+                'developing from Numpy.',
     url='https://github.com/nanguoyu/SemiFlow',
     author='Dong Wang (nanguoyu)',
     author_email='dongwang@wangdongdong.wang',

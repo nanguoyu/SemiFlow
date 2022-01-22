@@ -6,7 +6,6 @@
 
 from threading import Thread
 from socketserver import TCPServer
-import SemiFlow
 from SemiFlow.layer import Dense
 from SemiFlow.Model import Sequential
 import numpy as np
