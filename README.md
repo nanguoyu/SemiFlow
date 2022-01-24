@@ -14,7 +14,9 @@ SemiFlow is a deep learning framework with auto-differentiation, developing from
 
 ## News!
 
-> July 21, 2021. SemiFlow is going to support **Distributed deep learning**. The first
+> Jan 24, 2022. SemiFlow supports converting models from SemiFlow to [ONNX](https://onnx.ai/)
+
+> July 21, 2021. SemiFlow is now supporting **Distributed deep learning**. The first
 > parallel solution is Parameter Sever.
 
 > July 2021. We are introducing **model.save** and **model.load** !
@@ -157,13 +159,13 @@ Server/Master example code in [distributed_parameter_server.py](./example/distri
 
 ### Features
 
-- [x] Dense layer
+- [x] Dense/Full-connected layer
 - [x] Model manager for training
 - [x] Optimizer
 - [x] Activation function
   - [x] ReLU
-    - [x] Sigmoid
-    - [x] tanh
+  - [x] Sigmoid
+  - [x] tanh
 - [x] Loss
     - [x] mse
     - [x] mae
@@ -184,6 +186,7 @@ Server/Master example code in [distributed_parameter_server.py](./example/distri
 - [x] Load model
 - [x] Distributed machine learning
   - [x] Parameter Server
+- [x] SemiFlow-ONNX
 - [ ] CUDA support
 - [ ] Examples and other docs
 

@@ -13,6 +13,9 @@
 SemiFlow 是一个基于Numpy的支持自动求导的深度学习框架。
 
 ## 最新消息!
+
+> 2022年1月24日。 SemiFlow 现已支持模型从SemiFlow 转换到 [ONNX](https://onnx.ai/)
+
 > 2021年7月21日. SemiFlow 现已支持分布式机器学习！ 第一个被支持方案是 Parameter Sever.
 >
 > 2021年7月， 我们为SemiFlow新增了模型保存与加载功能！
@@ -163,13 +166,13 @@ Server/Master example code in [distributed_parameter_server.py](./example/distri
 
 ### 特征
 
-- [x] Dense layer
+- [x] Dense/Full-connected layer
 - [x] Model manager for training
 - [x] Optimizer
 - [x] Activation function
   - [x] ReLU
   - [x] Sigmoid
-    - [x] tanh
+  - [x] tanh
 - [x] Loss
     - [x] mse
     - [x] mae
@@ -190,6 +193,7 @@ Server/Master example code in [distributed_parameter_server.py](./example/distri
 - [x] Load model
 - [x] Distributed machine learning
   - [x] Parameter Server
+- [x] SemiFlow-ONNX
 - [ ] CUDA support
 - [ ] Examples and other docs
 

@@ -18,7 +18,9 @@ class Model(object):
     def __init__(self):
         """Abstract model constructor
         """
-        pass
+        self.first_layer = None  # To infer dtype and inputs
+        self.last_layer = None  # outputLayer is used for tracking loss
+        self.isComplied = False
 
     def fit(self, **kwargs):
         """Train the model by epoch learning rule
@@ -117,7 +119,7 @@ class Sequential(Model):
             verbose: Integer. 0, 1, or 2. Verbosity mode.
                 0 = silent, 1 = progress bar, 2 = one line per epoch.
             callbacks: List of callback instances to apply during training and validation.
-            validation_split: Float between 0 to 1. Fraction of the training data to be used as validation data.
+            validation_split: Float between 0 and 1. Fraction of the training data to be used as validation data.
             validation_data: Validation data to evaluate model metrics at the end of each epoch.
             shuffle: Boolean. Whether to shuffle the training data.
             **kwargs: More parameters will be supported.
@@ -151,7 +153,7 @@ class Sequential(Model):
             x_train: Input data in training.
             y_train: Target data in training.
             x_val: Input data in validation.
-            y_val: Target dat in validation.
+            y_val: Target data in validation.
             epochs: Number of epochs to train the model.
             batch_size: The number of a group samples per gradient update.
 
@@ -203,7 +205,7 @@ class Sequential(Model):
         """Add a layer to the model
 
         Args:
-            layer: a instance of layer
+            layer: an instance of layer
 
         """
         if not isinstance(layer, Layer):

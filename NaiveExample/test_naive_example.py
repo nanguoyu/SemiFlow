@@ -7,7 +7,7 @@
 # coding=utf-8
 
 import numpy as np
-from NaiveExample.Dense import Dense
+from Dense import Dense
 
 Asamples = np.random.multivariate_normal([6, 6], [[1, 0], [0, 1]], 200)
 Bsamples = np.random.multivariate_normal([1, 1], [[1, 0], [0, 1]], 200)

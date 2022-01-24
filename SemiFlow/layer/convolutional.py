@@ -57,6 +57,8 @@ class Conv2D(Layer):
         else:
             raise TypeError("padding should be str")
         self.activation = activations.get(activation)
+        self.original_activation_name = self.activation.name  # Sometime, the optimizer may optimize the activation
+        # function
         self.kernel_initializer = initializers.get(kernel_initializer)
         if use_bias:
             self.bias_initializer = initializers.get(bias_initializer)
@@ -106,7 +108,7 @@ class Conv2D(Layer):
     def ForwardPropagation(self):
         assert self.isInitialized, "you should init_para"
         """ convolution operation
-        A method to accelerate convolution from,
+        A method to accelerate convolution from
         [1] Kumar Chellapilla, Sidd Puri, Patrice Simard. High Performance Convolutional Neural Networks
         for Document Processing. Tenth International Workshop on Frontiers in Handwriting Recognition,
         Université de Rennes 1, Oct 2006, La Baule (France). ffinria-00112631f
@@ -151,11 +153,11 @@ class Conv2D(Layer):
         h_pad, w_pad = self.padding_width[1:3]
         output_channel = self.filters
         if hasattr(self, 'input_shape'):
-            # For a Conv2D layer as the first layer.
+            # When a Conv2D layer is the first layer.
             input_channel = self.input_shape[-1]
             in_h, in_w = self.input_shape[0:2]
         else:
-            # when x in {InputLayer, MaxPooling, Conv2D}
+            # when x in {MaxPooling, Conv2D}
             in_h, in_w, input_channel = x.output_shape
         # kernel shape
         shape = list(self.kernel_size)

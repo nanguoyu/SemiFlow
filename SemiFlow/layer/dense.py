@@ -27,6 +27,8 @@ class Dense(Layer):
         super(Dense, self).__init__(**kwargs)
         self.units = units
         self.activation = activations.get(activation)
+        self.original_activation_name = self.activation.name  # Sometime, the optimizer may optimize the activation
+        # function
         self.kernel_initializer = initializers.get(kernel_initializer)
         self.bias_initializer = initializers.get(bias_initializer)
         self.isInitialized = False
