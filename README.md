@@ -45,16 +45,16 @@ import numpy as np
 # Prepare MNIST data.
 train_set, test_set = mnist(one_hot=True)
 
-x_train, y_train = train_set[0], train_set[1]
-x_test, y_test = test_set[0], test_set[1]
+x_train, y_train = train_set[0][:128], train_set[1][:128]
+x_test, y_test = test_set[0][:128], test_set[1][:128]
 x_train = x_train.reshape(x_train.shape[0], x_train.shape[1] * x_train.shape[2])
 x_test = x_test.reshape(x_test.shape[0], x_test.shape[1] * x_test.shape[2])
 
 # Specify trainig setting
 
 num_classes = 10
-batch_size = 128
-epochs = 10
+batch_size = 32
+epochs = 30
 
 # Init a sequential model
 model = Sequential()
@@ -77,6 +77,7 @@ history = model.fit(x_train, y_train,
                 batch_size=batch_size,
                 epochs=epochs,
                 verbose=1,
+                validation_split=0.2,
                 validation_data=(None, None))
                 
 # Evaluate model in test data 
@@ -96,8 +97,8 @@ import numpy as np
 # Prepare MNIST data.
 train_set, test_set = mnist(one_hot=True)
 
-x_train, y_train = train_set[0], train_set[1]
-x_test, y_test = test_set[0], test_set[1]
+x_train, y_train = train_set[0][:128], train_set[1][:128]
+x_test, y_test = test_set[0][:128], test_set[1][:128]
 
 # Resize to height * width * channel
 x_train = x_train.reshape((-1, 28, 28, 1))
@@ -107,8 +108,8 @@ x_test = x_test.reshape((-1, 28, 28, 1))
 # Specify trainig setting
 
 num_classes = 10
-batch_size = 128
-epochs = 10
+batch_size = 32
+epochs = 30
 
 # Init a sequential model
 model = Sequential()
@@ -140,6 +141,7 @@ history = model.fit(x_train, y_train,
                 batch_size=batch_size,
                 epochs=epochs,
                 verbose=1,
+                validation_split=0.2,
                 validation_data=(None, None))
                 
 # Evaluate model in test data 

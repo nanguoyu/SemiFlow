@@ -40,6 +40,7 @@ def test_conv2d_mnist():
                         batch_size=batch_size,
                         epochs=epochs,
                         verbose=1,
+                        validation_split=0.2,
                         validation_data=(None, None))
 
     score = model.evaluate(x_test, y_test, verbose=0)
