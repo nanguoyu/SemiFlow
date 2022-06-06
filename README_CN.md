@@ -92,7 +92,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
 ``` Python 
 # Import SemiFlow
 
-from SemiFlow.layer import Dense
+from SemiFlow.layer import Dense, Conv2D, Flatten, MaxPool2D
 from SemiFlow.Model import Sequential
 from SemiFlow.utils.dataset import mnist
 import numpy as np
